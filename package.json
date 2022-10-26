@@ -1,16 +1,37 @@
 {
-  "name": "ts-relation-tuple-parser",
-  "version": "0.0.0",
-  "license": "MIT",
-  "scripts": {},
-  "private": true,
-  "dependencies": {},
-  "devDependencies": {
-    "@nrwl/cli": "15.0.3",
-    "@nrwl/js": "15.0.3",
-    "@nrwl/workspace": "15.0.3",
-    "nx": "15.0.3",
-    "prettier": "^2.6.2",
-    "typescript": "~4.8.2"
-  }
+	"name": "ts-relation-tuple-parser",
+	"version": "0.0.0",
+	"license": "MIT",
+	"scripts": {
+		"nx": "nx",
+    "format": "nx format"
+	},
+	"private": true,
+	"dependencies": {
+		"assert-never": "^1.2.1",
+		"defekt": "^9.3.1",
+		"tslib": "^2.3.0"
+	},
+	"devDependencies": {
+		"@nrwl/cli": "15.0.3",
+		"@nrwl/eslint-plugin-nx": "15.0.3",
+		"@nrwl/jest": "15.0.3",
+		"@nrwl/js": "15.0.3",
+		"@nrwl/linter": "15.0.3",
+		"@nrwl/rollup": "15.0.3",
+		"@nrwl/workspace": "15.0.3",
+		"@types/jest": "28.1.1",
+		"@types/node": "16.11.7",
+		"@typescript-eslint/eslint-plugin": "^5.36.1",
+		"@typescript-eslint/parser": "^5.36.1",
+		"eslint": "~8.15.0",
+		"eslint-config-prettier": "8.1.0",
+		"jest": "28.1.1",
+		"jest-environment-jsdom": "28.1.1",
+		"nx": "15.0.3",
+		"prettier": "^2.6.2",
+		"ts-jest": "28.0.5",
+		"ts-node": "10.9.1",
+		"typescript": "~4.8.2"
+	}
 }
