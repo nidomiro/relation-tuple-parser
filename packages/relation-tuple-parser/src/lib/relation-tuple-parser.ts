@@ -23,6 +23,10 @@ enum ParseState {
 
 const forbiddenValueCharacters = [':', '#', '@']
 
+type PartialRelationTuple = Omit<Partial<RelationTuple>, 'subjectOrSet'> & {
+	subjectOrSet?: Partial<RelationTuple['subjectOrSet']>
+}
+
 /**
  * str syntax:
  * ```
@@ -42,44 +46,42 @@ export const parseRelationTuple = (str: string): Result<RelationTuple, RelationT
 
 	let state: ParseState = ParseState.RelationTupleObject
 
-	const result: Omit<Partial<RelationTuple>, 'subjectOrSet'> & {
-		subjectOrSet?: Partial<RelationTuple['subjectOrSet']>
-	} = {}
+	const result: PartialRelationTuple = {}
 
 	for (const c of str) {
 		switch (state) {
 			case ParseState.RelationTupleObject: {
-				if (c !== '#') {
-					tmp += c
-				} else {
+				if (c === '#') {
 					result.object = tmp
 					tmp = ''
 					state = ParseState.RelationTupleRelation
+				} else {
+					tmp += c
 				}
 				break
 			}
 			case ParseState.RelationTupleRelation: {
-				if (c !== '@') {
-					tmp += c
-				} else {
+				if (c === '@') {
 					result.relation = tmp
 					tmp = ''
 					state = ParseState.SubjectOrSubjectObject
+				} else {
+					tmp += c
 				}
 				break
 			}
 			case ParseState.SubjectOrSubjectObject: {
-				if (c !== '#') {
-					if (forbiddenValueCharacters.includes(c)) {
-						tmpIncludesForbiddenChar = true
-					}
-					tmp += c
-				} else {
+				if (c === '#') {
 					result.subjectOrSet = {
 						object: tmp,
 					}
 					tmp = ''
 					state = ParseState.SubjectRelation
+				} else {
+					if (forbiddenValueCharacters.includes(c)) {
+						tmpIncludesForbiddenChar = true
+					}
+					tmp += c
 				}
 				break
 			}
