@@ -2,12 +2,15 @@ import { defekt, error, Result, value } from 'defekt'
 import { assertNever } from 'assert-never'
 import { RelationTuple, SubjectSet } from './relation-tuple'
 
-export class RelationTupleSyntaxError extends defekt({ code: 'SyntaxError' }) {}
+export class RelationTupleSyntaxError extends defekt({ code: 'RelationTupleSyntaxError' }) {
+}
 
 enum ParseState {
-	RelationTupleObject,
-	RelationTupleRelation,
-	SubjectOrSubjectObject,
+	Namespace,
+	Object,
+	Relation,
+	SubjectOrSubjectNamespace,
+	SubjectObject,
 	SubjectRelation,
 }
 
@@ -20,10 +23,10 @@ type PartialRelationTuple = Omit<Partial<RelationTuple>, 'subjectOrSet'> & {
 /**
  * str syntax:
  * ```
- * <relation-tuple> ::= <object>'#'relation'@'<subject>
- * <object> ::= namespace':'object_id
- * <subject> ::= subject_id | <subject_set>
- * <subject_set> ::= <object>'#'relation
+ * ⟨tuple⟩ ::= ⟨object⟩‘#’⟨relation⟩‘@’⟨subject⟩
+ * ⟨object⟩ ::= ⟨namespace⟩‘:’⟨object id⟩
+ * ⟨subject⟩ ::= ⟨subject id⟩ | ⟨subjectSet⟩
+ * ⟨subjectSet⟩ ::= ⟨object⟩‘#’⟨relation⟩
  * ```
  * example: `object#relation@subject`
  *
@@ -34,37 +37,58 @@ export const parseRelationTuple = (str: string): Result<RelationTuple, RelationT
 	let tmp = ''
 	let tmpIncludesForbiddenChar = false
 
-	let state: ParseState = ParseState.RelationTupleObject
+	let state: ParseState = ParseState.Namespace
 
 	const result: PartialRelationTuple = {}
 
 	for (const c of str) {
 		switch (state) {
-			case ParseState.RelationTupleObject: {
+			case ParseState.Namespace: {
+				if (c === ':') {
+					result.namespace = tmp
+					tmp = ''
+					state = ParseState.Object
+				} else {
+					tmp += c
+				}
+				break
+			}
+			case ParseState.Object: {
 				if (c === '#') {
 					result.object = tmp
 					tmp = ''
-					state = ParseState.RelationTupleRelation
+					state = ParseState.Relation
 				} else {
 					tmp += c
 				}
 				break
 			}
-			case ParseState.RelationTupleRelation: {
+			case ParseState.Relation: {
 				if (c === '@') {
 					result.relation = tmp
 					tmp = ''
-					state = ParseState.SubjectOrSubjectObject
+					state = ParseState.SubjectOrSubjectNamespace
 				} else {
 					tmp += c
 				}
 				break
 			}
-			case ParseState.SubjectOrSubjectObject: {
-				if (c === '#') {
+			case ParseState.SubjectOrSubjectNamespace: {
+				if (c === ':') {
 					result.subjectOrSet = {
-						object: tmp,
+						namespace: tmp,
 					}
+					tmp = ''
+					state = ParseState.SubjectObject
+				} else {
+					if (forbiddenValueCharacters.includes(c)) return error(new RelationTupleSyntaxError())
+					tmp += c
+				}
+				break
+			}
+			case ParseState.SubjectObject: {
+				if (c === '#') {
+					(result.subjectOrSet as Partial<SubjectSet>).object = tmp
 					tmp = ''
 					state = ParseState.SubjectRelation
 				} else {
@@ -86,7 +110,7 @@ export const parseRelationTuple = (str: string): Result<RelationTuple, RelationT
 	}
 
 	switch (state) {
-		case ParseState.SubjectOrSubjectObject:
+		case ParseState.SubjectOrSubjectNamespace:
 			if (tmpIncludesForbiddenChar) return error(new RelationTupleSyntaxError())
 			result.subjectOrSet = tmp
 			break

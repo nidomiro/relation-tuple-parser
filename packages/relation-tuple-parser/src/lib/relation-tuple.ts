@@ -1,9 +1,11 @@
 export interface SubjectSet {
+	namespace: string
 	object: string
 	relation: string
 }
 
 export interface RelationTuple {
+	namespace: string
 	object: string
 	relation: string
 	subjectOrSet: string | SubjectSet
