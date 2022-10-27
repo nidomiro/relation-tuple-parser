@@ -1,16 +1,6 @@
-import { defekt, Result, error, value } from 'defekt'
+import { defekt, error, Result, value } from 'defekt'
 import { assertNever } from 'assert-never'
-
-export interface SubjectSet {
-	object: string
-	relation: string
-}
-
-export interface RelationTuple {
-	object: string
-	relation: string
-	subjectOrSet: string | SubjectSet
-}
+import { RelationTuple, SubjectSet } from './relation-tuple'
 
 export class RelationTupleSyntaxError extends defekt({ code: 'SyntaxError' }) {}
 
@@ -101,7 +91,7 @@ export const parseRelationTuple = (str: string): Result<RelationTuple, RelationT
 			result.subjectOrSet = tmp
 			break
 		case ParseState.SubjectRelation:
-			;(result.subjectOrSet as Partial<SubjectSet>).relation = tmp
+			(result.subjectOrSet as Partial<SubjectSet>).relation = tmp
 			break
 
 		default:
