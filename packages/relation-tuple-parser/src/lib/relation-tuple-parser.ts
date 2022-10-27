@@ -1,23 +1,127 @@
 import { defekt, error, Result, value } from 'defekt'
-import { assertNever } from 'assert-never'
 import { RelationTuple, SubjectSet } from './relation-tuple'
+import { type ModifyTypeOfAttribute } from './util'
 
 export class RelationTupleSyntaxError extends defekt({ code: 'RelationTupleSyntaxError' }) {
 }
 
-enum ParseState {
-	Namespace,
-	Object,
-	Relation,
-	SubjectOrSubjectNamespace,
-	SubjectObject,
-	SubjectRelation,
-}
-
 const forbiddenValueCharacters = [':', '#', '@']
 
-type PartialRelationTuple = Omit<Partial<RelationTuple>, 'subjectOrSet'> & {
-	subjectOrSet?: Partial<RelationTuple['subjectOrSet']>
+type PartialRelationTuple = ModifyTypeOfAttribute<Partial<RelationTuple>, {
+	subjectIdOrSet?: Partial<RelationTuple['subjectIdOrSet']>
+}>
+
+type ParseContext = {
+	relationTuple: PartialRelationTuple
+}
+
+type ParserState = {
+	nextChar: (c: string) => Result<ParserState, RelationTupleSyntaxError>
+	finish: () => Result<RelationTuple, RelationTupleSyntaxError>
+}
+
+abstract class ParseStateCommon implements ParserState {
+	protected acc = ''
+
+	constructor(protected readonly context: ParseContext) {
+	}
+
+	abstract nextChar(c: string): Result<ParserState, RelationTupleSyntaxError>
+
+	finish(): Result<RelationTuple, RelationTupleSyntaxError> {
+		return error(new RelationTupleSyntaxError('Expected string to continue'))
+	}
+
+}
+
+class ParseStateNamespace extends ParseStateCommon {
+
+	nextChar(c: string): Result<ParserState, RelationTupleSyntaxError> {
+		if (c === ':') {
+			this.context.relationTuple.namespace = this.acc
+			return value(new ParseStateObject(this.context) as ParserState)
+		} else if (forbiddenValueCharacters.includes(c)) {
+			return error(new RelationTupleSyntaxError())
+		}
+		this.acc += c
+		return value(this as ParserState)
+	}
+}
+
+class ParseStateObject extends ParseStateCommon {
+
+	override nextChar(c: string): Result<ParserState, RelationTupleSyntaxError> {
+		if (c === '#') {
+			this.context.relationTuple.object = this.acc
+			return value(new ParseStateRelation(this.context) as ParserState)
+		} else if (forbiddenValueCharacters.includes(c)) {
+			return error(new RelationTupleSyntaxError())
+		}
+		this.acc += c
+		return value(this as ParserState)
+	}
+}
+
+class ParseStateRelation extends ParseStateCommon {
+
+	override nextChar(c: string): Result<ParserState, RelationTupleSyntaxError> {
+		if (c === '@') {
+			this.context.relationTuple.relation = this.acc
+			return value(new ParseStateSubjectIdOrSubjectSetNamespace(this.context) as ParserState)
+		} else if (forbiddenValueCharacters.includes(c)) {
+			return error(new RelationTupleSyntaxError())
+		}
+		this.acc += c
+		return value(this as ParserState)
+	}
+}
+
+class ParseStateSubjectIdOrSubjectSetNamespace extends ParseStateCommon {
+
+	override nextChar(c: string): Result<ParserState, RelationTupleSyntaxError> {
+		if (c === ':') {
+			this.context.relationTuple.subjectIdOrSet = { namespace: this.acc }
+			return value(new ParseStateSubjectSetObject(this.context) as ParserState)
+		} else if (forbiddenValueCharacters.includes(c)) {
+			return error(new RelationTupleSyntaxError())
+		}
+		this.acc += c
+		return value(this as ParserState)
+	}
+
+	override finish(): Result<RelationTuple, RelationTupleSyntaxError> {
+		this.context.relationTuple.subjectIdOrSet = this.acc
+		return value(this.context.relationTuple as RelationTuple)
+	}
+}
+
+class ParseStateSubjectSetObject extends ParseStateCommon {
+
+	override nextChar(c: string): Result<ParserState, RelationTupleSyntaxError> {
+		if (c === '#') {
+			(this.context.relationTuple.subjectIdOrSet as Partial<SubjectSet>).object = this.acc
+			return value(new ParseStateSubjectSetRelation(this.context) as ParserState)
+		} else if (forbiddenValueCharacters.includes(c)) {
+			return error(new RelationTupleSyntaxError())
+		}
+		this.acc += c
+		return value(this as ParserState)
+	}
+}
+
+class ParseStateSubjectSetRelation extends ParseStateCommon {
+	override nextChar(c: string): Result<ParserState, RelationTupleSyntaxError> {
+		if (forbiddenValueCharacters.includes(c)) {
+			return error(new RelationTupleSyntaxError())
+		}
+		this.acc += c
+		return value(this as ParserState)
+	}
+
+	override finish(): Result<RelationTuple, RelationTupleSyntaxError> {
+		(this.context.relationTuple.subjectIdOrSet as Partial<SubjectSet>).relation = this.acc
+		return value(this.context.relationTuple as RelationTuple)
+	}
 }
 
 /**
@@ -34,93 +138,16 @@ type PartialRelationTuple = Omit<Partial<RelationTuple>, 'subjectOrSet'> & {
  * @param str
  */
 export const parseRelationTuple = (str: string): Result<RelationTuple, RelationTupleSyntaxError> => {
-	let tmp = ''
-	let tmpIncludesForbiddenChar = false
-
-	let state: ParseState = ParseState.Namespace
-
-	const result: PartialRelationTuple = {}
+	const context: ParseContext = { relationTuple: {} }
+	let currentState: ParserState = new ParseStateNamespace(context)
 
 	for (const c of str) {
-		switch (state) {
-			case ParseState.Namespace: {
-				if (c === ':') {
-					result.namespace = tmp
-					tmp = ''
-					state = ParseState.Object
-				} else {
-					tmp += c
-				}
-				break
-			}
-			case ParseState.Object: {
-				if (c === '#') {
-					result.object = tmp
-					tmp = ''
-					state = ParseState.Relation
-				} else {
-					tmp += c
-				}
-				break
-			}
-			case ParseState.Relation: {
-				if (c === '@') {
-					result.relation = tmp
-					tmp = ''
-					state = ParseState.SubjectOrSubjectNamespace
-				} else {
-					tmp += c
-				}
-				break
-			}
-			case ParseState.SubjectOrSubjectNamespace: {
-				if (c === ':') {
-					result.subjectOrSet = {
-						namespace: tmp,
-					}
-					tmp = ''
-					state = ParseState.SubjectObject
-				} else {
-					if (forbiddenValueCharacters.includes(c)) return error(new RelationTupleSyntaxError())
-					tmp += c
-				}
-				break
-			}
-			case ParseState.SubjectObject: {
-				if (c === '#') {
-					(result.subjectOrSet as Partial<SubjectSet>).object = tmp
-					tmp = ''
-					state = ParseState.SubjectRelation
-				} else {
-					if (forbiddenValueCharacters.includes(c)) {
-						tmpIncludesForbiddenChar = true
-					}
-					tmp += c
-				}
-				break
-			}
-			case ParseState.SubjectRelation: {
-				if (forbiddenValueCharacters.includes(c)) return error(new RelationTupleSyntaxError())
-				tmp += c
-				break
-			}
-			default:
-				assertNever(state)
+		const newState = currentState.nextChar(c)
+		if (newState.hasError()) {
+			return error(newState.error)
 		}
+		currentState = newState.value
 	}
 
-	switch (state) {
-		case ParseState.SubjectOrSubjectNamespace:
-			if (tmpIncludesForbiddenChar) return error(new RelationTupleSyntaxError())
-			result.subjectOrSet = tmp
-			break
-		case ParseState.SubjectRelation:
-			(result.subjectOrSet as Partial<SubjectSet>).relation = tmp
-			break
-
-		default:
-			return error(new RelationTupleSyntaxError())
-	}
-
-	return value(result as RelationTuple)
+	return currentState.finish()
 }

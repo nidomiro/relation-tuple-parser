@@ -8,5 +8,5 @@ export interface RelationTuple {
 	namespace: string
 	object: string
 	relation: string
-	subjectOrSet: string | SubjectSet
+	subjectIdOrSet: string | SubjectSet
 }

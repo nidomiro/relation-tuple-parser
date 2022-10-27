@@ -28,7 +28,7 @@ describe('parseRelationTuple tests', () => {
 			namespace: 'namespace',
 			object: 'object',
 			relation: 'relation',
-			subjectOrSet: 'subject',
+			subjectIdOrSet: 'subject',
 		} as RelationTuple)
 	})
 
@@ -38,7 +38,7 @@ describe('parseRelationTuple tests', () => {
 			namespace: 'namespace',
 			object: 'object',
 			relation: 'relation',
-			subjectOrSet: {
+			subjectIdOrSet: {
 				namespace: 'subjectNamespace',
 				object: 'subjectObject',
 				relation: 'subjectRelation',
@@ -52,7 +52,7 @@ describe('parseRelationTuple tests', () => {
 			namespace: 'namespace',
 			object: 'object',
 			relation: 'relation',
-			subjectOrSet: 'subject',
+			subjectIdOrSet: 'subject',
 		} as RelationTuple)
 	})
 
@@ -76,9 +76,11 @@ describe('parseRelationTuple tests', () => {
 			const sumInMs = nsToMs(sumInNs)
 			const avgInMs = nsToMs(avgInNs)
 
-			console.log(`Execution for ${result.length} elements took: ${sumInMs}ms (avg: ${avgInMs}ms)`)
+			console.log(
+				`performance tests :: with subject :: Execution for ${result.length} elements took: ${sumInMs}ms (avg: ${avgInMs}ms)`,
+			)
 
-			expect(avgInMs).toBeLessThan(0.1)
+			expect(avgInMs).toBeLessThan(0.2)
 		})
 
 		it('with subjectSet', () => {
@@ -100,9 +102,11 @@ describe('parseRelationTuple tests', () => {
 			const sumInMs = nsToMs(sumInNs)
 			const avgInMs = nsToMs(avgInNs)
 
-			console.log(`Execution for ${result.length} elements took: ${sumInMs}ms (avg: ${avgInMs}ms)`)
+			console.log(
+				`performance tests :: with subjectSet :: Execution for ${result.length} elements took: ${sumInMs}ms (avg: ${avgInMs}ms)`,
+			)
 
-			expect(avgInMs).toBeLessThan(0.15)
+			expect(avgInMs).toBeLessThan(0.5)
 		})
 	})
 
