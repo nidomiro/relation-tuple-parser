@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"scripts": {
 		"nx": "nx",
-    "format": "nx format"
+		"format": "nx format"
 	},
 	"private": true,
 	"dependencies": {

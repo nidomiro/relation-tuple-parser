@@ -23,7 +23,17 @@ const generateRelationTuple = (i: number, withSubjectSet: boolean) => {
 
 describe('parseRelationTuple tests', () => {
 	it('parses simple RelationTuple with subject', () => {
-		const result = parseRelationTuple('namespace:object#relation@subject')
+		const result = parseRelationTuple(' namespace:object#relation@subject ')
+		expect(result.unwrapOrThrow()).toEqual({
+			namespace: 'namespace',
+			object: 'object',
+			relation: 'relation',
+			subjectIdOrSet: 'subject',
+		} as RelationTuple)
+	})
+
+	it('parses simple RelationTuple with (subject)', () => {
+		const result = parseRelationTuple(' namespace:object#relation@(subject) ')
 		expect(result.unwrapOrThrow()).toEqual({
 			namespace: 'namespace',
 			object: 'object',
@@ -33,7 +43,23 @@ describe('parseRelationTuple tests', () => {
 	})
 
 	it('parses simple RelationTuple with subjectSet', () => {
-		const result = parseRelationTuple('namespace:object#relation@subjectNamespace:subjectObject#subjectRelation')
+		const result = parseRelationTuple(' namespace:object#relation@subjectNamespace:subjectObject#subjectRelation ')
+		expect(result.unwrapOrThrow()).toEqual({
+			namespace: 'namespace',
+			object: 'object',
+			relation: 'relation',
+			subjectIdOrSet: {
+				namespace: 'subjectNamespace',
+				object: 'subjectObject',
+				relation: 'subjectRelation',
+			},
+		} as RelationTuple)
+	})
+
+	it('parses simple RelationTuple with (subjectSet)', () => {
+		const result = parseRelationTuple(
+			' namespace:object#relation@(subjectNamespace:subjectObject#subjectRelation) ',
+		)
 		expect(result.unwrapOrThrow()).toEqual({
 			namespace: 'namespace',
 			object: 'object',
@@ -80,7 +106,7 @@ describe('parseRelationTuple tests', () => {
 				`performance tests :: with subject :: Execution for ${result.length} elements took: ${sumInMs}ms (avg: ${avgInMs}ms)`,
 			)
 
-			expect(avgInMs).toBeLessThan(0.2)
+			expect(avgInMs).toBeLessThan(0.5)
 		})
 
 		it('with subjectSet', () => {
@@ -106,7 +132,7 @@ describe('parseRelationTuple tests', () => {
 				`performance tests :: with subjectSet :: Execution for ${result.length} elements took: ${sumInMs}ms (avg: ${avgInMs}ms)`,
 			)
 
-			expect(avgInMs).toBeLessThan(0.5)
+			expect(avgInMs).toBeLessThan(0.7)
 		})
 	})
 
