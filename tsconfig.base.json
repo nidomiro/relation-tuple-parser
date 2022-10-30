@@ -15,7 +15,9 @@
 		"skipDefaultLibCheck": true,
 		"baseUrl": ".",
 		"paths": {
-			"@nidomiro/relation-tuple-parser": ["packages/relation-tuple-parser/src/index.ts"]
+			"@nidomiro/relation-tuple-parser": [
+				"packages/typescript/src/index.ts"
+			]
 		}
 	},
 	"exclude": ["node_modules", "tmp"]
