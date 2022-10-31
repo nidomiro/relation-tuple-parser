@@ -2,6 +2,7 @@ import { error, Result, value } from 'defekt'
 import { parseRelationTuple, RelationTupleSyntaxError } from './relation-tuple-parser'
 import { RelationTupleWithReplacements } from './relation-tuple-with-replacements'
 import { generateReplacerFunction } from './util'
+import { TwoWayMap } from './two-way-map'
 
 const delimiter = '\u2744'
 
@@ -27,21 +28,23 @@ export const parseRelationTupleWithReplacements = <T extends Record<string, stri
 	}
 	const tuple = relationTupleResult.value
 
+	const usedPlaceholderLookupMap = new TwoWayMap(usedPlaceholder)
+
 	let subjectIdOrSet: RelationTupleWithReplacements<T>['subjectIdOrSet']
 	if (typeof tuple.subjectIdOrSet === 'object') {
 		subjectIdOrSet = {
-			namespace: generateReplacerFunction(tuple.subjectIdOrSet.namespace, usedPlaceholder),
-			object: generateReplacerFunction(tuple.subjectIdOrSet.object, usedPlaceholder),
-			relation: generateReplacerFunction(tuple.subjectIdOrSet.relation, usedPlaceholder),
+			namespace: generateReplacerFunction(tuple.subjectIdOrSet.namespace, usedPlaceholderLookupMap),
+			object: generateReplacerFunction(tuple.subjectIdOrSet.object, usedPlaceholderLookupMap),
+			relation: generateReplacerFunction(tuple.subjectIdOrSet.relation, usedPlaceholderLookupMap),
 		}
 	} else {
-		subjectIdOrSet = generateReplacerFunction(tuple.subjectIdOrSet, usedPlaceholder)
+		subjectIdOrSet = generateReplacerFunction(tuple.subjectIdOrSet, usedPlaceholderLookupMap)
 	}
 
 	return value({
-		namespace: generateReplacerFunction(tuple.namespace, usedPlaceholder),
-		object: generateReplacerFunction(tuple.object, usedPlaceholder),
-		relation: generateReplacerFunction(tuple.relation, usedPlaceholder),
+		namespace: generateReplacerFunction(tuple.namespace, usedPlaceholderLookupMap),
+		object: generateReplacerFunction(tuple.object, usedPlaceholderLookupMap),
+		relation: generateReplacerFunction(tuple.relation, usedPlaceholderLookupMap),
 		subjectIdOrSet,
 	})
 }
