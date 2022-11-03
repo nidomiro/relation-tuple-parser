@@ -54,7 +54,11 @@ export const generateReplacerFunction = <T extends Record<string, string>>(
 
 	if (foundReplacements.length <= 0) {
 		return () => str
-	} else if (foundReplacements.length === 1) {
+	} else if (
+		foundReplacements.length === 1 &&
+		foundReplacements[0].start === 0 &&
+		foundReplacements[0].endExcl === str.length
+	) {
 		return (replacements) => replacements[foundReplacements[0].prop]
 	}
 

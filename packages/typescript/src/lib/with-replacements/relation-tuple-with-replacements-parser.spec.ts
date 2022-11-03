@@ -50,6 +50,26 @@ describe('parseRelationTupleWithReplacements tests', () => {
 		} as RelationTuple)
 	})
 
+	it('simple replacements with static part', () => {
+		const relationTupleWithReplacements = parseRelationTupleWithReplacements(
+			({ namespace, object, relation, subject }) => `*${namespace}*:*${object}*#*${relation}@${subject}*`,
+		).unwrapOrThrow()
+
+		const relationTuple = applyReplacements(relationTupleWithReplacements, {
+			namespace: 'aaa',
+			object: 'bbb',
+			relation: 'ccc',
+			subject: 'ddd',
+		})
+
+		expect(relationTuple).toEqual({
+			namespace: '*aaa*',
+			object: '*bbb*',
+			relation: '*ccc',
+			subjectIdOrSet: 'ddd*',
+		} as RelationTuple)
+	})
+
 	it('multiple replacements per part with subject', () => {
 		const relationTupleWithReplacements = parseRelationTupleWithReplacements(
 			({ namespace, a, object, b, relation, c, subject, d }) =>
