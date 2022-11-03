@@ -1,4 +1,4 @@
-import { type RelationTuple } from './relation-tuple'
+import { type RelationTuple } from '../relation-tuple'
 import { parseRelationTupleWithReplacements } from './relation-tuple-with-replacements-parser'
 import { applyReplacements } from './relation-tuple-with-replacements'
 

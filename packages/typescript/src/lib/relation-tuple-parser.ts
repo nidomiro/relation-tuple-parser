@@ -1,6 +1,6 @@
 import { defekt, error, Result, value } from 'defekt'
 import { RelationTuple, SubjectSet } from './relation-tuple'
-import { type ModifyTypeOfAttribute } from './util'
+import { type ModifyTypeOfAttribute } from './util/type.util'
 
 export class RelationTupleSyntaxError extends defekt({ code: 'RelationTupleSyntaxError' }) {}
 

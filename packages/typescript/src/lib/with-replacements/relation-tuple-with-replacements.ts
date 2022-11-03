@@ -1,4 +1,4 @@
-import { RelationTuple } from './relation-tuple'
+import { RelationTuple } from '../relation-tuple'
 
 export type ReplaceableString<T extends Record<string, string>> = (replacements: T) => string
 

@@ -1,8 +1,8 @@
 import { error, Result, value } from 'defekt'
-import { parseRelationTuple, RelationTupleSyntaxError } from './relation-tuple-parser'
+import { parseRelationTuple, RelationTupleSyntaxError } from '../relation-tuple-parser'
 import { RelationTupleWithReplacements } from './relation-tuple-with-replacements'
-import { generateReplacerFunction } from './util'
-import { TwoWayMap } from './two-way-map'
+import { generateReplacerFunction } from './generate-replacer-function'
+import { TwoWayMap } from '../util/two-way-map'
 
 const delimiter = '\u2744'
 
