@@ -1,4 +1,4 @@
-# relation-tuple-parser/typescript
+# @nidomiro/relation-tuple-parser
 
 This library can parse a string representation of a Relation tuple to an object structure in typescript.
 

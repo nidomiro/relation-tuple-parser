@@ -135,17 +135,19 @@ class ParseStateSubjectSetRelation extends ParseStateCommon {
 }
 
 /**
+ * Parses the given string to a {@link RelationTuple}.
  * str syntax:
  * ```
- * ⟨tuple⟩ ::= ⟨object⟩‘#’⟨relation⟩‘@’⟨subject⟩
- * ⟨object⟩ ::= ⟨namespace⟩‘:’⟨object id⟩
- * ⟨subject⟩ ::= ⟨subject id⟩ | ⟨subjectSet⟩
- * ⟨subjectSet⟩ ::= ⟨object⟩‘#’⟨relation⟩
+ * <relation-tuple> ::= <object>'#'relation'@'<subject> | <object>'#'relation'@('<subject>')'
+ * <object> ::= namespace':'object_id
+ * <subject> ::= subject_id | <subject_set>
+ * <subject_set> ::= <object>'#'relation
  * ```
  * example: `object#relation@subject`
- *
+ * The characters `:@#()` are reserved for syntax use only (=> forbidden in values)
  *
  * @param str
+ * @return The parsed {@link RelationTuple} or {@link RelationTupleSyntaxError} in case of an invalid string.
  */
 export const parseRelationTuple = (str: string): Result<RelationTuple, RelationTupleSyntaxError> => {
 	const trimmedStr = str.trim()

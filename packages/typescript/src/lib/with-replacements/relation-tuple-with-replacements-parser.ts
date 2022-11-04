@@ -9,7 +9,7 @@ const delimiter = '\u2744'
 export type CreateRelationTupleStrWithReplacements<T> = (args: T) => string
 
 export const parseRelationTupleWithReplacements = <T extends Record<string, string>>(
-	relationTupleStringCreator: CreateRelationTupleStrWithReplacements<T>,
+	relationTupleStringGenerator: CreateRelationTupleStrWithReplacements<T>,
 ): Result<RelationTupleWithReplacements<T>, RelationTupleSyntaxError> => {
 	const usedPlaceholder = new Map<keyof T, string>()
 	const argsProxy = new Proxy<T>({} as T, {
@@ -20,7 +20,7 @@ export const parseRelationTupleWithReplacements = <T extends Record<string, stri
 		},
 	})
 
-	const relationTupleStr = relationTupleStringCreator(argsProxy)
+	const relationTupleStr = relationTupleStringGenerator(argsProxy)
 
 	const relationTupleResult = parseRelationTuple(relationTupleStr)
 	if (relationTupleResult.hasError()) {

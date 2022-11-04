@@ -1,23 +1,23 @@
 {
 	"$schema": "../../node_modules/nx/schemas/project-schema.json",
-	"name": "typescript",
-	"sourceRoot": "packages/typescript/src",
+	"name": "typescript-ory-grpc",
+	"sourceRoot": "packages/typescript-ory-grpc/src",
 	"projectType": "library",
 	"targets": {
 		"build": {
 			"executor": "@nrwl/js:tsc",
 			"outputs": ["{options.outputPath}"],
 			"options": {
-				"outputPath": "dist/packages/typescript",
-				"main": "packages/typescript/src/index.ts",
-				"tsConfig": "packages/typescript/tsconfig.lib.json",
-				"assets": ["packages/typescript/*.md"]
+				"outputPath": "dist/packages/typescript-ory-grpc",
+				"main": "packages/typescript-ory-grpc/src/index.ts",
+				"tsConfig": "packages/typescript-ory-grpc/tsconfig.lib.json",
+				"assets": ["packages/typescript-ory-grpc/*.md"]
 			}
 		},
 		"publish": {
 			"executor": "nx:run-commands",
 			"options": {
-				"command": "node tools/scripts/publish.mjs typescript {args.ver} {args.tag}"
+				"command": "node tools/scripts/publish.mjs typescript-ory {args.ver} {args.tag}"
 			},
 			"dependsOn": ["build"]
 		},
@@ -25,14 +25,14 @@
 			"executor": "@nrwl/linter:eslint",
 			"outputs": ["{options.outputFile}"],
 			"options": {
-				"lintFilePatterns": ["packages/typescript/**/*.ts"]
+				"lintFilePatterns": ["packages/typescript-ory-grpc/**/*.ts"]
 			}
 		},
 		"test": {
 			"executor": "@nrwl/jest:jest",
 			"outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
 			"options": {
-				"jestConfig": "packages/typescript/jest.config.ts",
+				"jestConfig": "packages/typescript-ory-grpc/jest.config.ts",
 				"passWithNoTests": true
 			}
 		}

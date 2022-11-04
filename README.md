@@ -30,4 +30,13 @@ has `access` to `sharedFiles:a.txt`".
 
 ## Repository content
 
--   [packages/typescript](./packages/typescript): A typescript implementation including dynamic value replacements
+-   [@nidomiro/relation-tuple-parser](./packages/typescript): A typescript implementation including dynamic value replacements
+-   [@nidomiro/relation-tuple-parser-ory-grpc](./packages/typescript-ory-grpc): same as `@nidomiro/relation-tuple-parser` but uses grpc types from ory keto
+
+## Development Info
+
+### Publish typescript versions
+
+```bash
+nx run-many --projects=typescript,typescript-ory-grpc --target=publish --tag latest --ver x.x.x
+```
