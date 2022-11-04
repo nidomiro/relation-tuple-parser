@@ -110,4 +110,6 @@ Run `nx test typescript` to execute the unit tests.
 
 ## Publish
 
-Run `nx publish typescript` to publish to npm.
+Make sure you are logged into npm.
+
+Run `nx publish typescript --ver x.x.x --tag latest` to publish to npm.
