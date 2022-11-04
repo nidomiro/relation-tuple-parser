@@ -2,8 +2,7 @@
 
 This library can parse a string representation of a Relation tuple to an object structure in typescript.
 
-Relation tuples are part
-of "[Zanzibar: Google's Consistent, Global Authorization System](https://research.google/pubs/pub48190/)".
+Relation tuples are used to evaluate permissions in "[Zanzibar: Google's Consistent, Global Authorization System](https://research.google/pubs/pub48190/)".
 
 The [BNF](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form) of a valid Relation tuple is as follows:
 
@@ -77,9 +76,7 @@ the current user.
 ```ts
 import { parseRelationTupleWithReplacements } from '@nidomiro/relation-tuple-parser'
 
-const result = parseRelationTupleWithReplacements(
-	({ userId }) => `groups:admin#member@${userId}`,
-)
+const result = parseRelationTupleWithReplacements(({ userId }) => `groups:admin#member@${userId}`)
 
 /**
  * Contains the "Template" of the Relation tuple with the replacements defined above.
@@ -94,8 +91,7 @@ const relationTuple = applyReplacements(valueWithreplacements, {
 	userId: 'my_user_id',
 })
 
-/*
-	relationTuple = {
+/*	relationTuple = {
 						namespace: 'groups',
 						object: 'admin',
 						relation: 'member',
@@ -115,5 +111,3 @@ Run `nx test typescript` to execute the unit tests.
 ## Publish
 
 Run `nx publish typescript` to publish to npm.
-
-
