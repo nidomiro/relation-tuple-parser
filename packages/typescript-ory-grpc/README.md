@@ -1,5 +1,7 @@
 # @nidomiro/relation-tuple-parser-ory
 
+This library is the same as `@nidomiro/relation-tuple-parser` but uses grpc types of [ory keto](https://www.ory.sh/docs/keto/).
+
 ## Usage
 
 ```ts

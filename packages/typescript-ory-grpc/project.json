@@ -17,7 +17,7 @@
 		"publish": {
 			"executor": "nx:run-commands",
 			"options": {
-				"command": "node tools/scripts/publish.mjs typescript-ory {args.ver} {args.tag}"
+				"command": "node tools/scripts/publish.mjs typescript-ory-grpc {args.ver} {args.tag}"
 			},
 			"dependsOn": ["build"]
 		},
