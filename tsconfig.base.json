@@ -16,7 +16,7 @@
 		"baseUrl": ".",
 		"paths": {
 			"@nidomiro/relation-tuple-parser": ["packages/typescript/src/index.ts"],
-			"@nidomiro/relation-tuple-parser-ory-grpc": ["packages/typescript-ory-grpc/src/index.ts"]
+			"@nidomiro/relation-tuple-parser-ory-keto": ["packages/typescript-ory-keto/src/index.ts"]
 		}
 	},
 	"exclude": ["node_modules", "tmp"]

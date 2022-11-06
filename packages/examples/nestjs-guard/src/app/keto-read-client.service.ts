@@ -6,7 +6,7 @@ import * as grpc from '@grpc/grpc-js'
 import { error as dError, Result, value } from 'defekt'
 import { UnknownError } from './errors/unknown.error'
 import { KETO_READ_API_GRPC } from '../constants'
-import { RelationTupleWithReplacementsConverter } from '@nidomiro/relation-tuple-parser-ory-grpc'
+import { RelationTupleWithReplacementsConverter } from '@nidomiro/relation-tuple-parser-ory-keto'
 
 @Injectable()
 export class KetoReadClientService {

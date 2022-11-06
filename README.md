@@ -30,13 +30,19 @@ has `access` to `sharedFiles:a.txt`".
 
 ## Repository content
 
+### Examples
+
+-   [nestjs-guard](./packages/examples/nestjs-guard): An example on how to use keto to secure a [NestJS](https://nestjs.com/) endpoint
+
+### Libraries
+
 -   [@nidomiro/relation-tuple-parser](./packages/typescript): A typescript implementation including dynamic value replacements
--   [@nidomiro/relation-tuple-parser-ory-grpc](./packages/typescript-ory-grpc): same as `@nidomiro/relation-tuple-parser` but uses grpc types from ory keto
+-   [@nidomiro/relation-tuple-parser-ory-keto](./packages/typescript-ory-keto): same as `@nidomiro/relation-tuple-parser` but uses types from ory keto
 
 ## Development Info
 
 ### Publish typescript versions
 
 ```bash
-nx run-many --projects=typescript,typescript-ory-grpc --target=publish --tag latest --ver x.x.x
+nx run-many --projects=typescript,typescript-ory-keto --target=publish --tag latest --ver x.x.x
 ```

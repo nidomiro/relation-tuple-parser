@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-	displayName: 'typescript-ory-grpc',
+	displayName: 'typescript-ory-keto',
 	preset: '../../jest.preset.js',
 	globals: {
 		'ts-jest': {
@@ -12,5 +12,5 @@ export default {
 		'^.+\\.[tj]s$': 'ts-jest',
 	},
 	moduleFileExtensions: ['ts', 'js', 'html'],
-	coverageDirectory: '../../coverage/packages/typescript-ory-grpc',
+	coverageDirectory: '../../coverage/packages/typescript-ory-keto',
 }

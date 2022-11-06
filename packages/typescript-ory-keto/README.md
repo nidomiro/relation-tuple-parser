@@ -6,7 +6,7 @@ This library is the same as `@nidomiro/relation-tuple-parser` but uses grpc type
 
 ```ts
 import { parseRelationTuple } from '@nidomiro/relation-tuple-parser'
-import { RelationTupleWithReplacementsConverter } from '@nidomiro/relation-tuple-parser-ory-grpc'
+import { RelationTupleWithReplacementsConverter } from '@nidomiro/relation-tuple-parser-ory-keto'
 
 const result = parseRelationTuple('sharedFiles:a.txt#access@(dirs:b#access)').unwrapOrThrow()
 
@@ -22,7 +22,7 @@ the current user.
 ### Usage
 
 ```ts
-import { parseRelationTupleWithReplacements } from '@nidomiro/relation-tuple-parser-ory-grpc'
+import { parseRelationTupleWithReplacements } from '@nidomiro/relation-tuple-parser-ory-keto'
 
 const result = parseRelationTupleWithReplacements(({ userId }) => `groups:admin#member@${userId}`)
 
@@ -42,14 +42,14 @@ const relationTuple = convertRelationTupleWithReplacementsToOryGrpc(valueWithrep
 
 ## Building
 
-Run `nx build typescript-ory-grpc` to build the library.
+Run `nx build typescript-ory-keto` to build the library.
 
 ## Running unit tests
 
-Run `nx test typescript-ory-grpc` to execute the unit tests.
+Run `nx test typescript-ory-keto` to execute the unit tests.
 
 ## Publish
 
 Make sure you are logged into npm.
 
-Run `nx publish typescript-ory-grpc --ver x.x.x --tag latest` to publish to npm.
+Run `nx publish typescript-ory-keto --ver x.x.x --tag latest` to publish to npm.

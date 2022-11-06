@@ -4,7 +4,7 @@ import { KETO_WRITE_API_HTTP } from '../constants'
 import { WriteApi } from '@ory/keto-client'
 import { error, Result, value } from 'defekt'
 import { UnknownError } from './errors/unknown.error'
-import { RelationTupleConverter } from '@nidomiro/relation-tuple-parser-ory-grpc'
+import { RelationTupleConverter } from '@nidomiro/relation-tuple-parser-ory-keto'
 
 @Injectable()
 export class KetoWriteClientService {

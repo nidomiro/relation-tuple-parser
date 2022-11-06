@@ -5,6 +5,7 @@ import { IncomingMessage } from 'http'
 import * as Url from 'url'
 import { KetoReadClientService } from '../keto-read-client.service'
 import assertNever from 'assert-never/index'
+import { HttpArgumentsHost } from '@nestjs/common/interfaces'
 
 @Injectable()
 export class KetoGuard implements CanActivate {
@@ -16,19 +17,10 @@ export class KetoGuard implements CanActivate {
 		const relationTuple = getGuardingRelationTuple(this._reflector, context.getHandler())
 
 		if (relationTuple === null) {
-			return false
+			return false // Deny every request by default
 		}
 
-		const request = ctx.getRequest<IncomingMessage>()
-		const { userId: rawUserId } = Url.parse(request.url, true).query
-
-		let userId: string
-		if (Array.isArray(rawUserId)) {
-			userId = rawUserId[0]
-		} else {
-			userId = rawUserId
-		}
-
+		let userId = this.getUserId(ctx)
 		const ketoResult = await this._ketoReadClient.validateRelationTuple(relationTuple, { userId })
 
 		if (ketoResult.hasError()) {
@@ -42,5 +34,25 @@ export class KetoGuard implements CanActivate {
 		}
 
 		return ketoResult.value.allowed
+	}
+
+	/**
+	 * Extracts the userId from query-parameters.
+	 * This is only for demonstration purposes.
+	 *
+	 * NEVER use this approach in production!
+	 *
+	 * @param ctx
+	 * @private
+	 */
+	private getUserId(ctx: HttpArgumentsHost) {
+		const request = ctx.getRequest<IncomingMessage>()
+		const { userId: rawUserId } = Url.parse(request.url, true).query
+
+		if (Array.isArray(rawUserId)) {
+			return rawUserId[0]
+		} else {
+			return rawUserId
+		}
 	}
 }
