@@ -6,10 +6,10 @@ import { TwoWayMap } from '../util/two-way-map'
 
 const delimiter = '\u2744'
 
-export type CreateRelationTupleStrWithReplacements<T> = (args: T) => string
+export type RelationTupleStringGenerator<T> = (args: T) => string
 
 export const parseRelationTupleWithReplacements = <T extends Record<string, string>>(
-	relationTupleStringGenerator: CreateRelationTupleStrWithReplacements<T>,
+	relationTupleStringGenerator: RelationTupleStringGenerator<T>,
 ): Result<RelationTupleWithReplacements<T>, RelationTupleSyntaxError> => {
 	const usedPlaceholder = new Map<keyof T, string>()
 	const argsProxy = new Proxy<T>({} as T, {

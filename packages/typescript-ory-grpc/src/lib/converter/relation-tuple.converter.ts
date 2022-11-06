@@ -1,11 +1,28 @@
 import { RelationTuple } from '@nidomiro/relation-tuple-parser'
+import { RelationQuery } from '@ory/keto-client'
 import {
 	RelationTuple as OryRelationTuple,
 	Subject as OrySubject,
 	SubjectSet as OrySubjectSet,
 } from '@ory/keto-grpc-client/ory/keto/relation_tuples/v1alpha2/relation_tuples_pb'
 
-export const convertRelationTupleToOryGrpc = (tuple: RelationTuple): OryRelationTuple => {
+export const toKetoHttpQuery = (tuple: RelationTuple): RelationQuery => {
+	const result: RelationQuery = {
+		namespace: tuple.namespace,
+		object: tuple.object,
+		relation: tuple.relation,
+	}
+
+	if (typeof tuple.subjectIdOrSet === 'string') {
+		result.subject_id = tuple.subjectIdOrSet
+	} else {
+		result.subject_set = tuple.subjectIdOrSet
+	}
+
+	return result
+}
+
+export const ToKetoGrpcRelationTuple = (tuple: RelationTuple): OryRelationTuple => {
 	const relationTuple = new OryRelationTuple()
 	relationTuple.setNamespace(tuple.namespace)
 	relationTuple.setObject(tuple.object)

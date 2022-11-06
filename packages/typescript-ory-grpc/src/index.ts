@@ -1,4 +1,7 @@
-export * from '@nidomiro/relation-tuple-parser'
-export { convertRelationTupleToOryGrpc } from './lib/convert-relation-tuple-to-ory-grpc'
-export { parseRelationTupleToOryGrpc } from './lib/ory-grpc-relation-tuple-parser'
-export { convertRelationTupleWithReplacementsToOryGrpc } from './lib/with-replacements/convert-relation-tuple-with-replacements-to-ory-grpc'
+export { KetoRelationTupleLike } from './lib/converter/keto-relation-tuple-like'
+
+import * as RelationTupleConverter from './lib/converter/relation-tuple.converter'
+
+import * as RelationTupleWithReplacementsConverter from './lib/converter/relation-tuple-with-replacements.converter'
+
+export { RelationTupleConverter, RelationTupleWithReplacementsConverter }

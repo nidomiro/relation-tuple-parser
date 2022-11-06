@@ -5,10 +5,12 @@ This library is the same as `@nidomiro/relation-tuple-parser` but uses grpc type
 ## Usage
 
 ```ts
-import { parseRelationTupleToOryGrpc } from '@nidomiro/relation-tuple-parser-ory-grpc'
+import { parseRelationTuple } from '@nidomiro/relation-tuple-parser'
+import { RelationTupleWithReplacementsConverter } from '@nidomiro/relation-tuple-parser-ory-grpc'
 
-const result = parseRelationTupleToOryGrpc('sharedFiles:a.txt#access@(dirs:b#access)')
-const value = result.unwrapOrThrow()
+const result = parseRelationTuple('sharedFiles:a.txt#access@(dirs:b#access)').unwrapOrThrow()
+
+const value = RelationTupleWithReplacementsConverter.toKetoGrpcRelationTuple(result)
 ```
 
 ## With replacements

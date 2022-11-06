@@ -1,0 +1,60 @@
+{
+	"name": "examples-nestjs-guard",
+	"$schema": "../../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "packages/examples/nestjs-guard/src",
+	"projectType": "application",
+	"targets": {
+		"build": {
+			"executor": "@nrwl/webpack:webpack",
+			"outputs": ["{options.outputPath}"],
+			"options": {
+				"target": "node",
+				"compiler": "tsc",
+				"outputPath": "dist/packages/examples/nestjs-guard",
+				"main": "packages/examples/nestjs-guard/src/main.ts",
+				"tsConfig": "packages/examples/nestjs-guard/tsconfig.app.json",
+				"assets": ["packages/examples/nestjs-guard/src/assets"]
+			},
+			"configurations": {
+				"production": {
+					"optimization": true,
+					"extractLicenses": true,
+					"inspect": false,
+					"fileReplacements": [
+						{
+							"replace": "packages/examples/nestjs-guard/src/environments/environment.ts",
+							"with": "packages/examples/nestjs-guard/src/environments/environment.prod.ts"
+						}
+					]
+				}
+			}
+		},
+		"serve": {
+			"executor": "@nrwl/js:node",
+			"options": {
+				"buildTarget": "examples-nestjs-guard:build"
+			},
+			"configurations": {
+				"production": {
+					"buildTarget": "examples-nestjs-guard:build:production"
+				}
+			}
+		},
+		"lint": {
+			"executor": "@nrwl/linter:eslint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["packages/examples/nestjs-guard/**/*.ts"]
+			}
+		},
+		"test": {
+			"executor": "@nrwl/jest:jest",
+			"outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+			"options": {
+				"jestConfig": "packages/examples/nestjs-guard/jest.config.ts",
+				"passWithNoTests": true
+			}
+		}
+	},
+	"tags": []
+}

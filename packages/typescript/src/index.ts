@@ -5,4 +5,7 @@ export {
 	SubjectSetWithReplacements,
 	ReplaceableString,
 } from './lib/with-replacements/relation-tuple-with-replacements'
-export { parseRelationTupleWithReplacements } from './lib/with-replacements/relation-tuple-with-replacements-parser'
+export {
+	parseRelationTupleWithReplacements,
+	RelationTupleStringGenerator,
+} from './lib/with-replacements/relation-tuple-with-replacements-parser'
