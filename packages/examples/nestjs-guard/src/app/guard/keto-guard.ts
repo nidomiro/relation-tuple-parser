@@ -20,8 +20,10 @@ export class KetoGuard implements CanActivate {
 			return false // Deny every request by default
 		}
 
-		let userId = this.getUserId(ctx)
-		const ketoResult = await this._ketoReadClient.validateRelationTuple(relationTuple, { userId })
+		const userId = this.getUserId(ctx)
+		const ketoResult = await this._ketoReadClient.validateRelationTuple(relationTuple, {
+			userId: userId ?? 'Unauthorized',
+		})
 
 		if (ketoResult.hasError()) {
 			const { error } = ketoResult
@@ -45,14 +47,14 @@ export class KetoGuard implements CanActivate {
 	 * @param ctx
 	 * @private
 	 */
-	private getUserId(ctx: HttpArgumentsHost) {
+	private getUserId(ctx: HttpArgumentsHost): string | null {
 		const request = ctx.getRequest<IncomingMessage>()
 		const { userId: rawUserId } = Url.parse(request.url, true).query
 
 		if (Array.isArray(rawUserId)) {
 			return rawUserId[0]
 		} else {
-			return rawUserId
+			return rawUserId ?? null
 		}
 	}
 }
