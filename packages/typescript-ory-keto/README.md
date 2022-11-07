@@ -1,5 +1,7 @@
 # @nidomiro/relation-tuple-parser-ory-keto
 
+[![npm version](https://badge.fury.io/js/@nidomiro%2Frelation-tuple-parser-ory-keto.svg)](https://www.npmjs.com/package/@nidomiro/relation-tuple-parser-ory-keto)
+
 This library is the same as `@nidomiro/relation-tuple-parser` but uses grpc types of [ory keto](https://www.ory.sh/docs/keto/).
 
 ## Usage

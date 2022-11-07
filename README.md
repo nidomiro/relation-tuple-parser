@@ -36,8 +36,8 @@ has `access` to `sharedFiles:a.txt`".
 
 ### Libraries
 
--   [@nidomiro/relation-tuple-parser](./packages/typescript): A typescript implementation including dynamic value replacements
--   [@nidomiro/relation-tuple-parser-ory-keto](./packages/typescript-ory-keto): same as `@nidomiro/relation-tuple-parser` but uses types from ory keto
+-   [@nidomiro/relation-tuple-parser](./packages/typescript): A typescript implementation including dynamic value replacements [![npm version](https://badge.fury.io/js/@nidomiro%2Frelation-tuple-parser.svg)](https://www.npmjs.com/package/@nidomiro/relation-tuple-parser)
+-   [@nidomiro/relation-tuple-parser-ory-keto](./packages/typescript-ory-keto): same as `@nidomiro/relation-tuple-parser` but uses types from ory keto [![npm version](https://badge.fury.io/js/@nidomiro%2Frelation-tuple-parser-ory-keto.svg)](https://www.npmjs.com/package/@nidomiro/relation-tuple-parser-ory-keto)
 
 ## Development Info
 

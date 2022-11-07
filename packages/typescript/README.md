@@ -1,5 +1,7 @@
 # @nidomiro/relation-tuple-parser
 
+[![npm version](https://badge.fury.io/js/@nidomiro%2Frelation-tuple-parser.svg)](https://www.npmjs.com/package/@nidomiro/relation-tuple-parser)
+
 This library can parse a string representation of a Relation tuple to an object structure in typescript.
 
 Relation tuples are used to evaluate permissions in "[Zanzibar: Google's Consistent, Global Authorization System](https://research.google/pubs/pub48190/)".
