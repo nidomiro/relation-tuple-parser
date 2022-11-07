@@ -1,19 +1,19 @@
 import { defekt, error, Result, value } from 'defekt'
 import { RelationTuple, SubjectSet } from './relation-tuple'
-import { type ModifyTypeOfAttribute } from './util/type.util'
+import { ModifyTypeOfProperty } from '@nidomiro/ts-type-utils'
 
 export class RelationTupleSyntaxError extends defekt({ code: 'RelationTupleSyntaxError' }) {}
 
 const forbiddenValueCharacters = [':', '#', '@', '(', ')']
 
-type PartialRelationTuple = ModifyTypeOfAttribute<
+type PartialRelationTuple = ModifyTypeOfProperty<
 	Partial<RelationTuple>,
 	{
 		subjectIdOrSet?: Partial<RelationTuple['subjectIdOrSet']>
 	}
 >
 
-type PartialRelationTupleWithSubjectSet = ModifyTypeOfAttribute<
+type PartialRelationTupleWithSubjectSet = ModifyTypeOfProperty<
 	Partial<RelationTuple>,
 	{
 		subjectIdOrSet: Partial<SubjectSet>

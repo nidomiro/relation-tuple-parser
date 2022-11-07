@@ -11,13 +11,14 @@
 		"@nestjs/common": "^9.0.0",
 		"@nestjs/core": "^9.0.0",
 		"@nestjs/platform-express": "^9.0.0",
+		"@nidomiro/ts-type-utils": "^0.1.1",
 		"@ory/keto-client": "^0.10.0-alpha.0",
 		"@ory/keto-grpc-client": "^0.10.0-alpha.0",
 		"assert-never": "^1.2.1",
 		"defekt": "^9.3.1",
 		"reflect-metadata": "^0.1.13",
 		"rxjs": "^7.0.0",
-		"tslib": "^2.3.0"
+		"tslib": "^2.4.1"
 	},
 	"devDependencies": {
 		"@nestjs/schematics": "^9.0.0",
