@@ -54,3 +54,18 @@ try {
 
 // Execute "npm publish" to publish
 execSync(`npm publish --access public --tag ${tag}`)
+
+let tagAlreadySet = false
+try {
+	const gitCommitTag = execSync(`git rev-list -n 1 ${tag}`).toString()
+	const gitCommitHead = execSync(`git rev-list -n 1 HEAD`).toString()
+	if (gitCommitHead === gitCommitTag) {
+		tagAlreadySet = true
+	}
+} catch (e) {
+	tagAlreadySet = false
+}
+
+if (!tagAlreadySet) {
+	execSync(`git tag -a ${tag} -m ${tag}`)
+}

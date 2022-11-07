@@ -1,5 +1,35 @@
 {
 	"name": "@nidomiro/relation-tuple-parser-ory-keto",
 	"version": "0.0.1",
-	"type": "commonjs"
+	"type": "commonjs",
+	"private": false,
+	"license": "MIT",
+	"author": {
+		"name": "Niclas Roßberger",
+		"url": "https://nidomiro.de"
+	},
+	"bugs": {
+		"url": "https://github.com/nidomiro/relation-tuple-parser/issues"
+	},
+	"homepage": "https://github.com/nidomiro/relation-tuple-parser/tree/main/packages/config-helper",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/nidomiro/relation-tuple-parser.git",
+		"directory": "packages/typescript-ory-keto"
+	},
+	"keywords": [
+		"typescript",
+		"util",
+		"type",
+		"ts",
+		"helper",
+		"relation-tuple",
+		"relation tuple",
+		"relationtuple",
+		"Zanzibar",
+		"Google Zanzibar",
+		"ory",
+		"keto",
+		"ory keto"
+	]
 }
