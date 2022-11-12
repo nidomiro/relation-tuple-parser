@@ -4,7 +4,7 @@ import { GuardedBy } from './guard/guarded-by.decorator'
 
 @Controller()
 export class AppController {
-	@GuardedBy(({ userId }) => `groups:users#member@${userId}`)
+	@GuardedBy(({ currentUserId }) => `groups:users#member@${currentUserId}`)
 	@Get()
 	getData() {
 		return 'Access grated!'

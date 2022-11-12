@@ -22,7 +22,7 @@ export class KetoGuard implements CanActivate {
 
 		const userId = this.getUserId(ctx)
 		const ketoResult = await this._ketoReadClient.validateRelationTuple(relationTuple, {
-			userId: userId ?? 'Unauthorized',
+			currentUserId: userId ?? 'Unauthorized',
 		})
 
 		if (ketoResult.hasError()) {

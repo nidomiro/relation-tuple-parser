@@ -1,3 +1,3 @@
 export type PossibleReplacements = {
-	userId: string | 'Unauthorized'
+	currentUserId: string | 'Unauthorized'
 }
