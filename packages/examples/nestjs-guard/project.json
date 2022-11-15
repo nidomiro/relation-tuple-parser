@@ -1,6 +1,6 @@
 {
-	"name": "examples-nestjs-guard",
 	"$schema": "../../../node_modules/nx/schemas/project-schema.json",
+	"name": "examples-nestjs-guard",
 	"sourceRoot": "packages/examples/nestjs-guard/src",
 	"projectType": "application",
 	"targets": {
