@@ -1,7 +1,8 @@
 import { TwoWayMap } from '../util/two-way-map'
 import { ReplaceableString } from './relation-tuple-with-replacements'
+import { ReplacementValues } from '@nidomiro/relation-tuple-parser'
 
-function findReplacementsInString<T extends Record<string, string>>(
+function findReplacementsInString<T extends ReplacementValues>(
 	str: string,
 	possibleReplacements: TwoWayMap<keyof T, string>,
 ): Array<{ start: number; endExcl: number; prop: keyof T }> {
@@ -24,7 +25,7 @@ function findReplacementsInString<T extends Record<string, string>>(
 	})
 }
 
-function generateReplacerFunctions<T extends Record<string, string>>(
+function generateReplacerFunctions<T extends ReplacementValues>(
 	sortedFoundReplacements: Array<{ start: number; endExcl: number; prop: keyof T }>,
 	str: string,
 ) {
@@ -34,7 +35,7 @@ function generateReplacerFunctions<T extends Record<string, string>>(
 	sortedFoundReplacements.forEach(({ start, endExcl, prop }) => {
 		const strPart = str.substring(pos, Math.max(0, start)) // let calculation happen before
 		resultStringParts.push(() => strPart)
-		resultStringParts.push((replacements) => replacements[prop])
+		resultStringParts.push((replacements) => String(replacements[prop]))
 
 		pos = endExcl
 	})
@@ -46,7 +47,7 @@ function generateReplacerFunctions<T extends Record<string, string>>(
 	return resultStringParts
 }
 
-export const generateReplacerFunction = <T extends Record<string, string>>(
+export const generateReplacerFunction = <T extends ReplacementValues>(
 	str: string,
 	possibleReplacements: TwoWayMap<keyof T, string>,
 ): ReplaceableString<T> => {
@@ -59,7 +60,7 @@ export const generateReplacerFunction = <T extends Record<string, string>>(
 		foundReplacements[0].start === 0 &&
 		foundReplacements[0].endExcl === str.length
 	) {
-		return (replacements) => replacements[foundReplacements[0].prop]
+		return (replacements) => String(replacements[foundReplacements[0].prop])
 	}
 
 	const sortedFoundReplacements = foundReplacements.sort((a, b) => a.start - b.start)

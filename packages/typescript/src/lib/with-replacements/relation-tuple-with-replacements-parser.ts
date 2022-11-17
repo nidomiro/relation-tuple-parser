@@ -3,12 +3,13 @@ import { parseRelationTuple, RelationTupleSyntaxError } from '../relation-tuple-
 import { RelationTupleWithReplacements } from './relation-tuple-with-replacements'
 import { generateReplacerFunction } from './generate-replacer-function'
 import { TwoWayMap } from '../util/two-way-map'
+import { ReplacementValues } from './replacement-values'
 
 const delimiter = '\u2744'
 
 export type RelationTupleStringGenerator<T> = (args: T) => string
 
-export const parseRelationTupleWithReplacements = <T extends Record<string, string>>(
+export const parseRelationTupleWithReplacements = <T extends ReplacementValues>(
 	relationTupleStringGenerator: RelationTupleStringGenerator<T>,
 ): Result<RelationTupleWithReplacements<T>, RelationTupleSyntaxError> => {
 	const usedPlaceholder = new Map<keyof T, string>()

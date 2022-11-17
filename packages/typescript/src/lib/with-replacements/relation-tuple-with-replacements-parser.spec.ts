@@ -94,4 +94,28 @@ describe('parseRelationTupleWithReplacements tests', () => {
 			subjectIdOrSet: '*ddd-4*',
 		} as RelationTuple)
 	})
+
+	it('replacements support multiple types', () => {
+		const replacements = {
+			numberInt: 1,
+			numberFP: 1.5,
+			booleanTrue: true,
+			booleanFalse: false,
+			string: 'myTestString',
+		}
+
+		const relationTupleWithReplacements = parseRelationTupleWithReplacements(
+			(r: typeof replacements) =>
+				`${r.numberInt}|${r.numberFP}|${r.booleanTrue}|${r.booleanFalse}|${r.string}:object#relation@subject`,
+		).unwrapOrThrow()
+
+		const relationTuple = applyReplacements(relationTupleWithReplacements, replacements)
+
+		expect(relationTuple).toEqual({
+			namespace: '1|1.5|true|false|myTestString',
+			object: 'object',
+			relation: 'relation',
+			subjectIdOrSet: 'subject',
+		} as RelationTuple)
+	})
 })

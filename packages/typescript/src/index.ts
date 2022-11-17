@@ -9,3 +9,4 @@ export {
 	parseRelationTupleWithReplacements,
 	RelationTupleStringGenerator,
 } from './lib/with-replacements/relation-tuple-with-replacements-parser'
+export { ReplacementValues } from './lib/with-replacements/replacement-values'

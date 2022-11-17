@@ -1,9 +1,9 @@
 import * as KetoGrpcRelationTuple from '@ory/keto-grpc-client/ory/keto/relation_tuples/v1alpha2/relation_tuples_pb'
 import * as KetoGrpcCheckService from '@ory/keto-grpc-client/ory/keto/relation_tuples/v1alpha2/check_service_pb'
-import { RelationTupleWithReplacements } from '@nidomiro/relation-tuple-parser'
+import { RelationTupleWithReplacements, ReplacementValues } from '@nidomiro/relation-tuple-parser'
 import { KetoRelationTupleLike } from './keto-relation-tuple-like'
 
-export const setInRelationGrpcTupleLike = <T extends Record<string, string>, R extends KetoRelationTupleLike>(
+export const setInRelationGrpcTupleLike = <T extends ReplacementValues, R extends KetoRelationTupleLike>(
 	oryRequest: R,
 	tuple: RelationTupleWithReplacements<T>,
 	replacements: T,
@@ -27,7 +27,7 @@ export const setInRelationGrpcTupleLike = <T extends Record<string, string>, R e
 	return oryRequest
 }
 
-export const toKetoGrpcRelationTuple = <T extends Record<string, string>>(
+export const toKetoGrpcRelationTuple = <T extends ReplacementValues>(
 	tuple: RelationTupleWithReplacements<T>,
 	replacements: T,
 ): KetoGrpcRelationTuple.RelationTuple => {
@@ -35,7 +35,7 @@ export const toKetoGrpcRelationTuple = <T extends Record<string, string>>(
 	return setInRelationGrpcTupleLike(relationTuple, tuple, replacements)
 }
 
-export const toKetoGrpcCheckRequest = <T extends Record<string, string>>(
+export const toKetoGrpcCheckRequest = <T extends ReplacementValues>(
 	tuple: RelationTupleWithReplacements<T>,
 	replacements: T,
 ): KetoGrpcCheckService.CheckRequest => {
