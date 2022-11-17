@@ -1,0 +1,35 @@
+name: Code Check
+
+on:
+    pull_request:
+    push:
+        branches:
+            - main
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        if: github.event.pull_request.draft == false
+        steps:
+            - name: checkout
+              uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+
+            - name: Setup node according to .nvmrc
+              uses: actions/setup-node@v3
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'npm'
+
+            - name: npm install
+              run: npm ci --prefer-offline --no-audit
+
+            - name: lint code for affected projects
+              run: npx nx affected --base origin/main --target=lint --verbose
+
+            - name: run tests for affected projects
+              run: npx nx affected --base origin/main --target=test
+
+            - name: run build prod for affected projects
+              run: npx nx affected --base origin/main --target=build --configuration=production
