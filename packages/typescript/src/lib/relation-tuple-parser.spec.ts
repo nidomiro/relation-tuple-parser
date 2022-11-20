@@ -22,64 +22,105 @@ const generateRelationTuple = (i: number, withSubjectSet: boolean) => {
 }
 
 describe('parseRelationTuple tests', () => {
-	it('parses simple RelationTuple with subject', () => {
-		const result = parseRelationTuple(' namespace:object#relation@subject ')
-		expect(result.unwrapOrThrow()).toEqual({
-			namespace: 'namespace',
-			object: 'object',
-			relation: 'relation',
-			subjectIdOrSet: 'subject',
-		} as RelationTuple)
-	})
+	describe(`parses valid RelationTuples`, () => {
+		it.each([
+			[
+				'namespace:object#relation@subject',
+				{
+					namespace: 'namespace',
+					object: 'object',
+					relation: 'relation',
+					subjectIdOrSet: 'subject',
+				} as RelationTuple,
+			],
+			[
+				' namespace:object#relation@subject     ',
+				{
+					namespace: 'namespace',
+					object: 'object',
+					relation: 'relation',
+					subjectIdOrSet: 'subject',
+				} as RelationTuple,
+			],
+			[
+				'namespace:object#relation@(subject)',
+				{
+					namespace: 'namespace',
+					object: 'object',
+					relation: 'relation',
+					subjectIdOrSet: 'subject',
+				} as RelationTuple,
+			],
+			[
+				'namespace:object#relation@subjectNamespace:subjectObject#subjectRelation',
+				{
+					namespace: 'namespace',
+					object: 'object',
+					relation: 'relation',
+					subjectIdOrSet: {
+						namespace: 'subjectNamespace',
+						object: 'subjectObject',
+						relation: 'subjectRelation'
+					},
+				} as RelationTuple,
+			],
+			[
+				'  namespace:object#relation@subjectNamespace:subjectObject#subjectRelation ',
+				{
+					namespace: 'namespace',
+					object: 'object',
+					relation: 'relation',
+					subjectIdOrSet: {
+						namespace: 'subjectNamespace',
+						object: 'subjectObject',
+						relation: 'subjectRelation'
+					},
+				} as RelationTuple,
+			],
+			[
+				'namespace:object#relation@(subjectNamespace:subjectObject#subjectRelation)',
+				{
+					namespace: 'namespace',
+					object: 'object',
+					relation: 'relation',
+					subjectIdOrSet: {
+						namespace: 'subjectNamespace',
+						object: 'subjectObject',
+						relation: 'subjectRelation'
+					},
+				} as RelationTuple,
+			],
+			[
+				'namespace:object#relation@(subjectNamespace:subjectObject)',
+				{
+					namespace: 'namespace',
+					object: 'object',
+					relation: 'relation',
+					subjectIdOrSet: {
+						namespace: 'subjectNamespace',
+						object: 'subjectObject',
+						relation: ''
+					},
+				} as RelationTuple,
+			],
+			[
+				'namespace:object#relation@(subjectNamespace:subjectObject#)',
+				{
+					namespace: 'namespace',
+					object: 'object',
+					relation: 'relation',
+					subjectIdOrSet: {
+						namespace: 'subjectNamespace',
+						object: 'subjectObject',
+						relation: ''
+					},
+				} as RelationTuple,
+			],
+		])('%s', (str, expectedRelationTuple) => {
+			const result = parseRelationTuple(str)
 
-	it('parses simple RelationTuple with (subject)', () => {
-		const result = parseRelationTuple(' namespace:object#relation@(subject) ')
-		expect(result.unwrapOrThrow()).toEqual({
-			namespace: 'namespace',
-			object: 'object',
-			relation: 'relation',
-			subjectIdOrSet: 'subject',
-		} as RelationTuple)
-	})
-
-	it('parses simple RelationTuple with subjectSet', () => {
-		const result = parseRelationTuple(' namespace:object#relation@subjectNamespace:subjectObject#subjectRelation ')
-		expect(result.unwrapOrThrow()).toEqual({
-			namespace: 'namespace',
-			object: 'object',
-			relation: 'relation',
-			subjectIdOrSet: {
-				namespace: 'subjectNamespace',
-				object: 'subjectObject',
-				relation: 'subjectRelation',
-			},
-		} as RelationTuple)
-	})
-
-	it('parses simple RelationTuple with (subjectSet)', () => {
-		const result = parseRelationTuple(
-			' namespace:object#relation@(subjectNamespace:subjectObject#subjectRelation) ',
-		)
-		expect(result.unwrapOrThrow()).toEqual({
-			namespace: 'namespace',
-			object: 'object',
-			relation: 'relation',
-			subjectIdOrSet: {
-				namespace: 'subjectNamespace',
-				object: 'subjectObject',
-				relation: 'subjectRelation',
-			},
-		} as RelationTuple)
-	})
-
-	it('parses simple RelationTuple with subject and namespace', () => {
-		const result = parseRelationTuple('namespace:object#relation@subject')
-		expect(result.unwrapOrThrow()).toEqual({
-			namespace: 'namespace',
-			object: 'object',
-			relation: 'relation',
-			subjectIdOrSet: 'subject',
-		} as RelationTuple)
+			expect(result.unwrapOrThrow()).toEqual(expectedRelationTuple)
+		})
 	})
 
 	describe('performance tests', () => {
@@ -147,8 +188,28 @@ describe('parseRelationTuple tests', () => {
 			['namespace:object#relation@subjectObject#relation'],
 			['object#relation@namespace:subjectObject#relation'],
 			['object#relation@subjectId'],
+			['namespace:object#@subjectId'],
+			['namespace:#relation@subjectId'],
+			[':object#relation@subjectId'],
+			['namespace:object#relation@'],
+			['namespace:object#relation@:subjectObject#relation'],
+			['namespace:object#relation@namespace:#relation'],
+			['namespace:object#relation@id:'],
+			['namespace::object#relation@id'],
+			['namespace:object##relation@id'],
+			['namespace:object#relation@@id'],
 		])('%s', (str) => {
 			const result = parseRelationTuple(str)
+
+			if (result.hasValue()) {
+				console.log(`Result has value: `, result.value)
+			}
+
+			expect(result.unwrapErrorOrThrow()).toBeInstanceOf(RelationTupleSyntaxError)
+		})
+
+		it(`rejects empty relation in subjectSet if configured`, () => {
+			const result = parseRelationTuple('namespace:object#relation@namespace:object', {allowEmptyRelationInSubjectSet: false})
 
 			if (result.hasValue()) {
 				console.log(`Result has value: `, result.value)

@@ -1,6 +1,11 @@
 import { defekt, error, Result, value } from 'defekt'
 import { RelationTuple, SubjectSet } from './relation-tuple'
 import { ModifyTypeOfProperty } from '@nidomiro/ts-type-utils'
+import {
+	DefaultRelationTupleParserConfig,
+	RelationTupleParserConfig,
+	RelationTupleParserConfigOverride,
+} from './relation-tuple-parser.config'
 
 export class RelationTupleSyntaxError extends defekt({ code: 'RelationTupleSyntaxError' }) {}
 
@@ -23,6 +28,7 @@ type PartialRelationTupleWithSubjectSet = ModifyTypeOfProperty<
 type ParseContext = {
 	relationTuple: PartialRelationTuple
 	wholeInput: string
+	config: RelationTupleParserConfig
 }
 
 type ParserState = {
@@ -58,6 +64,9 @@ abstract class ParseStateCommon implements ParserState {
 class ParseStateNamespace extends ParseStateCommon {
 	override nextChar(c: string, currentPosition: number): Result<ParserState, RelationTupleSyntaxError> {
 		if (c === ':') {
+			if(this.accValue.length === 0) {
+				return error( new RelationTupleSyntaxError(`namespace cannot be empty`))
+			}
 			this.context.relationTuple.namespace = this.accValue
 			return value(new ParseStateObject(this.context) as ParserState)
 		}
@@ -69,6 +78,9 @@ class ParseStateNamespace extends ParseStateCommon {
 class ParseStateObject extends ParseStateCommon {
 	override nextChar(c: string, currentPosition: number): Result<ParserState, RelationTupleSyntaxError> {
 		if (c === '#') {
+			if(this.accValue.length === 0) {
+				return error( new RelationTupleSyntaxError(`object cannot be empty`))
+			}
 			this.context.relationTuple.object = this.accValue
 			return value(new ParseStateRelation(this.context) as ParserState)
 		}
@@ -79,6 +91,9 @@ class ParseStateObject extends ParseStateCommon {
 class ParseStateRelation extends ParseStateCommon {
 	override nextChar(c: string, currentPosition: number): Result<ParserState, RelationTupleSyntaxError> {
 		if (c === '@') {
+			if(this.accValue.length === 0) {
+				return error( new RelationTupleSyntaxError(`relation cannot be empty`))
+			}
 			this.context.relationTuple.relation = this.accValue
 			return value(new ParseStateSubjectIdOrSubjectSetNamespace(this.context) as ParserState)
 		}
@@ -90,6 +105,9 @@ class ParseStateRelation extends ParseStateCommon {
 class ParseStateSubjectIdOrSubjectSetNamespace extends ParseStateCommon {
 	override nextChar(c: string, currentPosition: number): Result<ParserState, RelationTupleSyntaxError> {
 		if (c === ':') {
+			if(this.accValue.length === 0) {
+				return error( new RelationTupleSyntaxError(`namespace of subjectSet cannot be empty`))
+			}
 			this.context.relationTuple.subjectIdOrSet = { namespace: this.accValue }
 			return value(new ParseStateSubjectSetObject(this.context) as ParserState)
 		} else if (
@@ -102,6 +120,9 @@ class ParseStateSubjectIdOrSubjectSetNamespace extends ParseStateCommon {
 	}
 
 	override finish(): Result<RelationTuple, RelationTupleSyntaxError> {
+		if(this.accValue.length === 0) {
+			return error( new RelationTupleSyntaxError(`subjectId cannot be empty`))
+		}
 		this.context.relationTuple.subjectIdOrSet = this.accValue
 		return value(this.context.relationTuple as RelationTuple)
 	}
@@ -110,13 +131,33 @@ class ParseStateSubjectIdOrSubjectSetNamespace extends ParseStateCommon {
 class ParseStateSubjectSetObject extends ParseStateCommon {
 	override nextChar(c: string, currentPosition: number): Result<ParserState, RelationTupleSyntaxError> {
 		if (c === '#') {
+			if(this.accValue.length === 0) {
+				return error( new RelationTupleSyntaxError(`object of subjectSet cannot be empty`))
+			}
 			const castRelationTuple = this.context.relationTuple as PartialRelationTupleWithSubjectSet
 			castRelationTuple.subjectIdOrSet.object = this.accValue
 			return value(new ParseStateSubjectSetRelation(this.context) as ParserState)
+		} else if (currentPosition === this.context.wholeInput.length - 1 && c === ')') {
+			return value(this as ParserState)
 		}
 
 		return this.addCharAndReturnThis(c, currentPosition)
 	}
+
+	override finish(): Result<RelationTuple, RelationTupleSyntaxError> {
+		if(this.accValue.length === 0) {
+			return error( new RelationTupleSyntaxError(`object of subjectSet cannot be empty`))
+		}
+		if(!this.context.config.allowEmptyRelationInSubjectSet) {
+			return error( new RelationTupleSyntaxError(`relation of subjectSet cannot be empty`))
+		}
+
+		const castRelationTuple = this.context.relationTuple as PartialRelationTupleWithSubjectSet
+		castRelationTuple.subjectIdOrSet.object = this.accValue
+		castRelationTuple.subjectIdOrSet.relation = ''
+		return value(this.context.relationTuple as RelationTuple)
+	}
+
 }
 
 class ParseStateSubjectSetRelation extends ParseStateCommon {
@@ -128,6 +169,10 @@ class ParseStateSubjectSetRelation extends ParseStateCommon {
 	}
 
 	override finish(): Result<RelationTuple, RelationTupleSyntaxError> {
+		if(this.accValue.length === 0 && !this.context.config.allowEmptyRelationInSubjectSet) {
+			return error( new RelationTupleSyntaxError(`relation of subjectSet cannot be empty`))
+		}
+
 		const castRelationTuple = this.context.relationTuple as PartialRelationTupleWithSubjectSet
 		castRelationTuple.subjectIdOrSet.relation = this.accValue
 		return value(this.context.relationTuple as RelationTuple)
@@ -147,12 +192,20 @@ class ParseStateSubjectSetRelation extends ParseStateCommon {
  * The characters `:@#()` are reserved for syntax use only (=> forbidden in values)
  *
  * @param str
+ * @param configOverride overrides the values of {@link DefaultRelationTupleParserConfig}
  * @return The parsed {@link RelationTuple} or {@link RelationTupleSyntaxError} in case of an invalid string.
  */
-export const parseRelationTuple = (str: string): Result<RelationTuple, RelationTupleSyntaxError> => {
+export const parseRelationTuple = (
+	str: string,
+	configOverride: RelationTupleParserConfigOverride = {},
+): Result<RelationTuple, RelationTupleSyntaxError> => {
 	const trimmedStr = str.trim()
 
-	const context: ParseContext = { relationTuple: {}, wholeInput: trimmedStr }
+	const context: ParseContext = {
+		relationTuple: {},
+		wholeInput: trimmedStr,
+		config: { ...DefaultRelationTupleParserConfig, ...configOverride },
+	}
 	let currentState: ParserState = new ParseStateNamespace(context)
 
 	for (let i = 0; i < trimmedStr.length; i++) {
