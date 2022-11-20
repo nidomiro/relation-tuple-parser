@@ -6,7 +6,7 @@ import * as grpc from '@grpc/grpc-js'
 import { error as dError, Result, value } from 'defekt'
 import { UnknownError } from './errors/unknown.error'
 import { KETO_READ_API_GRPC } from '../constants'
-import { RelationTupleWithReplacementsConverter } from '@nidomiro/relation-tuple-parser-ory-keto'
+import { KetoGrpcConverter } from '@nidomiro/relation-tuple-parser-ory-keto'
 
 @Injectable()
 export class KetoReadClientService {
@@ -20,7 +20,7 @@ export class KetoReadClientService {
 		relationTuple: RelationTupleWithReplacements<PossibleReplacements>,
 		replacements: PossibleReplacements,
 	): Promise<Result<{ allowed: boolean }, UnknownError>> {
-		const checkRequest = RelationTupleWithReplacementsConverter.toKetoGrpcCheckRequest(relationTuple, replacements)
+		const checkRequest = KetoGrpcConverter.createCheckRequest(relationTuple, replacements)
 
 		return new Promise((resolve) => {
 			this._checkClient.check(checkRequest, (error: grpc.ServiceError | null, response) => {

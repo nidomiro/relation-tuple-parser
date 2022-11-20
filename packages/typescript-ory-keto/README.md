@@ -8,11 +8,14 @@ This library is the same as `@nidomiro/relation-tuple-parser` but uses grpc type
 
 ```ts
 import { parseRelationTuple } from '@nidomiro/relation-tuple-parser'
-import { RelationTupleWithReplacementsConverter } from '@nidomiro/relation-tuple-parser-ory-keto'
+import { KetoGrpcConverter, KetoHttpConverter } from '@nidomiro/relation-tuple-parser-ory-keto'
 
 const result = parseRelationTuple('sharedFiles:a.txt#access@(dirs:b#access)').unwrapOrThrow()
 
-const value = RelationTupleWithReplacementsConverter.toKetoGrpcRelationTuple(result)
+const grpcRelationTuple = KetoGrpcConverter.createRelationTuple(result)
+const grpcCheckRequest = KetoGrpcConverter.createCheckRequest(result)
+const httpRelationTuple = KetoHttpConverter.createRelationTuple(result)
+const httpRelationQuery = KetoHttpConverter.createRelationQuery(result)
 ```
 
 ## With replacements
@@ -24,7 +27,8 @@ the current user.
 ### Usage
 
 ```ts
-import { parseRelationTupleWithReplacements } from '@nidomiro/relation-tuple-parser-ory-keto'
+import { parseRelationTupleWithReplacements } from '@nidomiro/relation-tuple-parser'
+import { KetoGrpcConverter } from '@nidomiro/relation-tuple-parser-ory-keto'
 
 const result = parseRelationTupleWithReplacements(({ userId }) => `groups:admin#member@${userId}`)
 
@@ -37,20 +41,22 @@ const valueWithreplacements = result.unwrapOrThrow()
 /**
  * Execute this at evaluation time (e.g. every incomming Request) to get the actual ory Relation tuple send to keto via grpc.
  */
-const relationTuple = convertRelationTupleWithReplacementsToOryGrpc(valueWithreplacements, {
+const grpcCheckRequest = KetoGrpcConverter.createCheckRequest(valueWithreplacements, {
 	userId: 'my_user_id',
 })
 ```
 
-## Building
+## Development
+
+### Building
 
 Run `nx build typescript-ory-keto` to build the library.
 
-## Running unit tests
+### Running unit tests
 
 Run `nx test typescript-ory-keto` to execute the unit tests.
 
-## Publish
+### Publish
 
 Make sure you are logged into npm.
 

@@ -10,3 +10,4 @@ export {
 	RelationTupleStringGenerator,
 } from './lib/with-replacements/relation-tuple-with-replacements-parser'
 export { ReplacementValues } from './lib/with-replacements/replacement-values'
+export { isRelationTuple } from './lib/is-relation-tuple'

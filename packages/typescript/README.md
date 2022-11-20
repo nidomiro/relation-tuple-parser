@@ -102,15 +102,17 @@ const relationTuple = applyReplacements(valueWithreplacements, {
  */
 ```
 
-## Building
+## Development
+
+### Building
 
 Run `nx build typescript` to build the library.
 
-## Running unit tests
+### Running unit tests
 
 Run `nx test typescript` to execute the unit tests.
 
-## Publish
+### Publish
 
 Make sure you are logged into npm.
 

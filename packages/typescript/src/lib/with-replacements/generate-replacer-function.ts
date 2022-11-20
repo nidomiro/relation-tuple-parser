@@ -1,6 +1,6 @@
 import { TwoWayMap } from '../util/two-way-map'
 import { ReplaceableString } from './relation-tuple-with-replacements'
-import { ReplacementValues } from '@nidomiro/relation-tuple-parser'
+import { ReplacementValues } from './replacement-values'
 
 function findReplacementsInString<T extends ReplacementValues>(
 	str: string,
