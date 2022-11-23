@@ -1,6 +1,10 @@
 import { parseRelationTuple, RelationTupleSyntaxError } from './relation-tuple-parser'
 import { type RelationTuple } from './relation-tuple'
 
+function fail(reason = "fail was called in a test.") {
+	throw new Error(reason);
+}
+
 function nsToMs(ns: bigint): bigint
 function nsToMs(ns: number): number
 function nsToMs(ns: bigint | number): bigint | number {
@@ -205,7 +209,9 @@ describe('parseRelationTuple tests', () => {
 				console.log(`Result has value: `, result.value)
 			}
 
-			expect(result.unwrapErrorOrThrow()).toBeInstanceOf(RelationTupleSyntaxError)
+			if(result.hasValue()) {
+				fail(`Expected result to contain an error but got a value: \n${JSON.stringify(result.value, undefined, 2)}`)
+			}
 		})
 
 		it(`rejects empty relation in subjectSet if configured`, () => {
@@ -215,7 +221,9 @@ describe('parseRelationTuple tests', () => {
 				console.log(`Result has value: `, result.value)
 			}
 
-			expect(result.unwrapErrorOrThrow()).toBeInstanceOf(RelationTupleSyntaxError)
+			if(result.hasValue()) {
+				fail(`Expected result to contain an error but got a value:  \n${JSON.stringify(result.value, undefined, 2)}`)
+			}
 		})
 	})
 })
