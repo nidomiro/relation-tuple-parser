@@ -24,28 +24,24 @@ export interface RelationTupleVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitRelationTuple?: (ctx: RelationTupleContext) => Result;
-
 	/**
 	 * Visit a parse tree produced by `RelationTupleParser.namespacedObject`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitNamespacedObject?: (ctx: NamespacedObjectContext) => Result;
-
 	/**
 	 * Visit a parse tree produced by `RelationTupleParser.subject`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitSubject?: (ctx: SubjectContext) => Result;
-
 	/**
 	 * Visit a parse tree produced by `RelationTupleParser.subjectId`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitSubjectId?: (ctx: SubjectIdContext) => Result;
-
 	/**
 	 * Visit a parse tree produced by `RelationTupleParser.subjectSet`.
 	 * @param ctx the parse tree

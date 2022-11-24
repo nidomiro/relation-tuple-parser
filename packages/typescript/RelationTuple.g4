@@ -12,10 +12,10 @@ subject:            subjectId
 
 subjectId:          STRING;
 
-subjectSet:         namespacedObject '#' subjectRelation=STRING
+subjectSet:         namespacedObject '#' (subjectRelation=STRING)?
                     | namespacedObject
                     ;
 
 STRING: CHAR+;
-CHAR: ~[:#@];
+CHAR: ~[:#@()];
 

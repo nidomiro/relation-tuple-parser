@@ -61,13 +61,13 @@ export class RelationTupleParser extends Parser {
 	// tslint:enable:no-trailing-whitespace
 
 	// @Override
-	public get grammarFileName(): string { return "RelationTuple.g4"; }
+	public override get grammarFileName(): string { return "RelationTuple.g4"; }
 
 	// @Override
-	public get ruleNames(): string[] { return RelationTupleParser.ruleNames; }
+	public override get ruleNames(): string[] { return RelationTupleParser.ruleNames; }
 
 	// @Override
-	public get serializedATN(): string { return RelationTupleParser._serializedATN; }
+	public override get serializedATN(): string { return RelationTupleParser._serializedATN; }
 
 	protected createFailedPredicateException(predicate?: string, message?: string): FailedPredicateException {
 		return new FailedPredicateException(this, predicate, message);
@@ -156,7 +156,6 @@ export class RelationTupleParser extends Parser {
 				this.subjectId();
 				}
 				break;
-
 			case 2:
 				this.enterOuterAlt(_localctx, 2);
 				{
@@ -164,7 +163,6 @@ export class RelationTupleParser extends Parser {
 				this.subjectSet();
 				}
 				break;
-
 			case 3:
 				this.enterOuterAlt(_localctx, 3);
 				{
@@ -176,7 +174,6 @@ export class RelationTupleParser extends Parser {
 				this.match(RelationTupleParser.T__4);
 				}
 				break;
-
 			case 4:
 				this.enterOuterAlt(_localctx, 4);
 				{
@@ -233,10 +230,11 @@ export class RelationTupleParser extends Parser {
 	public subjectSet(): SubjectSetContext {
 		let _localctx: SubjectSetContext = new SubjectSetContext(this._ctx, this.state);
 		this.enterRule(_localctx, 8, RelationTupleParser.RULE_subjectSet);
+		let _la: number;
 		try {
-			this.state = 40;
+			this.state = 41;
 			this._errHandler.sync(this);
-			switch ( this.interpreter.adaptivePredict(this._input, 1, this._ctx) ) {
+			switch ( this.interpreter.adaptivePredict(this._input, 2, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(_localctx, 1);
 				{
@@ -244,15 +242,22 @@ export class RelationTupleParser extends Parser {
 				this.namespacedObject();
 				this.state = 36;
 				this.match(RelationTupleParser.T__0);
-				this.state = 37;
-				_localctx._subjectRelation = this.match(RelationTupleParser.STRING);
+				this.state = 38;
+				this._errHandler.sync(this);
+				_la = this._input.LA(1);
+				if (_la === RelationTupleParser.STRING) {
+					{
+					this.state = 37;
+					_localctx._subjectRelation = this.match(RelationTupleParser.STRING);
+					}
+				}
+
 				}
 				break;
-
 			case 2:
 				this.enterOuterAlt(_localctx, 2);
 				{
-				this.state = 39;
+				this.state = 40;
 				this.namespacedObject();
 				}
 				break;
@@ -274,25 +279,26 @@ export class RelationTupleParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\t-\x04\x02\t" +
+		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\t.\x04\x02\t" +
 		"\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x03\x02\x03" +
 		"\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x03\x03\x03\x03\x03\x03" +
 		"\x03\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03" +
-		"\x04\x03\x04\x05\x04\"\n\x04\x03\x05\x03\x05\x03\x06\x03\x06\x03\x06\x03" +
-		"\x06\x03\x06\x05\x06+\n\x06\x03\x06\x02\x02\x02\x07\x02\x02\x04\x02\x06" +
-		"\x02\b\x02\n\x02\x02\x02\x02+\x02\f\x03\x02\x02\x02\x04\x13\x03\x02\x02" +
-		"\x02\x06!\x03\x02\x02\x02\b#\x03\x02\x02\x02\n*\x03\x02\x02\x02\f\r\x05" +
-		"\x04\x03\x02\r\x0E\x07\x03\x02\x02\x0E\x0F\x07\b\x02\x02\x0F\x10\x07\x04" +
-		"\x02\x02\x10\x11\x05\x06\x04\x02\x11\x12\x07\x02\x02\x03\x12\x03\x03\x02" +
-		"\x02\x02\x13\x14\x07\b\x02\x02\x14\x15\x07\x05\x02\x02\x15\x16\x07\b\x02" +
-		"\x02\x16\x05\x03\x02\x02\x02\x17\"\x05\b\x05\x02\x18\"\x05\n\x06\x02\x19" +
-		"\x1A\x07\x06\x02\x02\x1A\x1B\x05\b\x05\x02\x1B\x1C\x07\x07\x02\x02\x1C" +
-		"\"\x03\x02\x02\x02\x1D\x1E\x07\x06\x02\x02\x1E\x1F\x05\n\x06\x02\x1F " +
-		"\x07\x07\x02\x02 \"\x03\x02\x02\x02!\x17\x03\x02\x02\x02!\x18\x03\x02" +
-		"\x02\x02!\x19\x03\x02\x02\x02!\x1D\x03\x02\x02\x02\"\x07\x03\x02\x02\x02" +
-		"#$\x07\b\x02\x02$\t\x03\x02\x02\x02%&\x05\x04\x03\x02&\'\x07\x03\x02\x02" +
-		"\'(\x07\b\x02\x02(+\x03\x02\x02\x02)+\x05\x04\x03\x02*%\x03\x02\x02\x02" +
-		"*)\x03\x02\x02\x02+\v\x03\x02\x02\x02\x04!*";
+		"\x04\x03\x04\x05\x04\"\n\x04\x03\x05\x03\x05\x03\x06\x03\x06\x03\x06\x05" +
+		"\x06)\n\x06\x03\x06\x05\x06,\n\x06\x03\x06\x02\x02\x02\x07\x02\x02\x04" +
+		"\x02\x06\x02\b\x02\n\x02\x02\x02\x02-\x02\f\x03\x02\x02\x02\x04\x13\x03" +
+		"\x02\x02\x02\x06!\x03\x02\x02\x02\b#\x03\x02\x02\x02\n+\x03\x02\x02\x02" +
+		"\f\r\x05\x04\x03\x02\r\x0E\x07\x03\x02\x02\x0E\x0F\x07\b\x02\x02\x0F\x10" +
+		"\x07\x04\x02\x02\x10\x11\x05\x06\x04\x02\x11\x12\x07\x02\x02\x03\x12\x03" +
+		"\x03\x02\x02\x02\x13\x14\x07\b\x02\x02\x14\x15\x07\x05\x02\x02\x15\x16" +
+		"\x07\b\x02\x02\x16\x05\x03\x02\x02\x02\x17\"\x05\b\x05\x02\x18\"\x05\n" +
+		"\x06\x02\x19\x1A\x07\x06\x02\x02\x1A\x1B\x05\b\x05\x02\x1B\x1C\x07\x07" +
+		"\x02\x02\x1C\"\x03\x02\x02\x02\x1D\x1E\x07\x06\x02\x02\x1E\x1F\x05\n\x06" +
+		"\x02\x1F \x07\x07\x02\x02 \"\x03\x02\x02\x02!\x17\x03\x02\x02\x02!\x18" +
+		"\x03\x02\x02\x02!\x19\x03\x02\x02\x02!\x1D\x03\x02\x02\x02\"\x07\x03\x02" +
+		"\x02\x02#$\x07\b\x02\x02$\t\x03\x02\x02\x02%&\x05\x04\x03\x02&(\x07\x03" +
+		"\x02\x02\')\x07\b\x02\x02(\'\x03\x02\x02\x02()\x03\x02\x02\x02),\x03\x02" +
+		"\x02\x02*,\x05\x04\x03\x02+%\x03\x02\x02\x02+*\x03\x02\x02\x02,\v\x03" +
+		"\x02\x02\x02\x05!(+";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
 		if (!RelationTupleParser.__ATN) {
@@ -318,9 +324,9 @@ export class RelationTupleContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return RelationTupleParser.RULE_relationTuple; }
+	public override get ruleIndex(): number { return RelationTupleParser.RULE_relationTuple; }
 	// @Override
-	public accept<Result>(visitor: RelationTupleVisitor<Result>): Result {
+	public override accept<Result>(visitor: RelationTupleVisitor<Result>): Result {
 		if (visitor.visitRelationTuple) {
 			return visitor.visitRelationTuple(this);
 		} else {
@@ -346,9 +352,9 @@ export class NamespacedObjectContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return RelationTupleParser.RULE_namespacedObject; }
+	public override get ruleIndex(): number { return RelationTupleParser.RULE_namespacedObject; }
 	// @Override
-	public accept<Result>(visitor: RelationTupleVisitor<Result>): Result {
+	public override accept<Result>(visitor: RelationTupleVisitor<Result>): Result {
 		if (visitor.visitNamespacedObject) {
 			return visitor.visitNamespacedObject(this);
 		} else {
@@ -369,9 +375,9 @@ export class SubjectContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return RelationTupleParser.RULE_subject; }
+	public override get ruleIndex(): number { return RelationTupleParser.RULE_subject; }
 	// @Override
-	public accept<Result>(visitor: RelationTupleVisitor<Result>): Result {
+	public override accept<Result>(visitor: RelationTupleVisitor<Result>): Result {
 		if (visitor.visitSubject) {
 			return visitor.visitSubject(this);
 		} else {
@@ -387,9 +393,9 @@ export class SubjectIdContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return RelationTupleParser.RULE_subjectId; }
+	public override get ruleIndex(): number { return RelationTupleParser.RULE_subjectId; }
 	// @Override
-	public accept<Result>(visitor: RelationTupleVisitor<Result>): Result {
+	public override accept<Result>(visitor: RelationTupleVisitor<Result>): Result {
 		if (visitor.visitSubjectId) {
 			return visitor.visitSubjectId(this);
 		} else {
@@ -409,9 +415,9 @@ export class SubjectSetContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return RelationTupleParser.RULE_subjectSet; }
+	public override get ruleIndex(): number { return RelationTupleParser.RULE_subjectSet; }
 	// @Override
-	public accept<Result>(visitor: RelationTupleVisitor<Result>): Result {
+	public override accept<Result>(visitor: RelationTupleVisitor<Result>): Result {
 		if (visitor.visitSubjectSet) {
 			return visitor.visitSubjectSet(this);
 		} else {
