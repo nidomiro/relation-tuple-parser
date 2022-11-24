@@ -217,25 +217,5 @@ describe('parseRelationTuple tests', () => {
 				)
 			}
 		})
-
-		it(`rejects empty relation in subjectSet if configured`, () => {
-			const result = parseRelationTuple('namespace:object#relation@namespace:object', {
-				allowEmptyRelationInSubjectSet: false,
-			})
-
-			if (result.hasValue()) {
-				console.log(`Result has value: `, result.value)
-			}
-
-			if (result.hasValue()) {
-				fail(
-					`Expected result to contain an error but got a value:  \n${JSON.stringify(
-						result.value,
-						undefined,
-						2,
-					)}`,
-				)
-			}
-		})
 	})
 })

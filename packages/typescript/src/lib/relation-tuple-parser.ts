@@ -1,183 +1,11 @@
-import { defekt, error, Result, value } from 'defekt'
-import { RelationTuple, SubjectSet } from './relation-tuple'
-import { ModifyTypeOfProperty } from '@nidomiro/ts-type-utils'
-import {
-	DefaultRelationTupleParserConfig,
-	RelationTupleParserConfig,
-	RelationTupleParserConfigOverride,
-} from './relation-tuple-parser.config'
-
-export class RelationTupleSyntaxError extends defekt({ code: 'RelationTupleSyntaxError' }) {}
-
-const forbiddenValueCharacters = [':', '#', '@', '(', ')']
-
-type PartialRelationTuple = ModifyTypeOfProperty<
-	Partial<RelationTuple>,
-	{
-		subjectIdOrSet?: Partial<RelationTuple['subjectIdOrSet']>
-	}
->
-
-type PartialRelationTupleWithSubjectSet = ModifyTypeOfProperty<
-	Partial<RelationTuple>,
-	{
-		subjectIdOrSet: Partial<SubjectSet>
-	}
->
-
-type ParseContext = {
-	relationTuple: PartialRelationTuple
-	wholeInput: string
-	config: RelationTupleParserConfig
-}
-
-type ParserState = {
-	nextChar: (c: string, currentPosition: number) => Result<ParserState, RelationTupleSyntaxError>
-	finish: () => Result<RelationTuple, RelationTupleSyntaxError>
-}
-
-abstract class ParseStateCommon implements ParserState {
-	private acc = ''
-
-	constructor(protected readonly context: ParseContext) {}
-
-	get accValue(): string {
-		return this.acc
-	}
-
-	addCharAndReturnThis(c: string, currentPosition: number): Result<ParserState, RelationTupleSyntaxError> {
-		if (forbiddenValueCharacters.includes(c)) {
-			return error(new RelationTupleSyntaxError(`Unexpected char '${c}' at position ${currentPosition}`))
-		}
-		this.acc += c
-
-		return value(this as ParserState)
-	}
-
-	abstract nextChar(c: string, currentPosition: number): Result<ParserState, RelationTupleSyntaxError>
-
-	finish(): Result<RelationTuple, RelationTupleSyntaxError> {
-		return error(new RelationTupleSyntaxError('Expected string to continue'))
-	}
-}
-
-class ParseStateNamespace extends ParseStateCommon {
-	override nextChar(c: string, currentPosition: number): Result<ParserState, RelationTupleSyntaxError> {
-		if (c === ':') {
-			if(this.accValue.length === 0) {
-				return error( new RelationTupleSyntaxError(`namespace cannot be empty`))
-			}
-			this.context.relationTuple.namespace = this.accValue
-			return value(new ParseStateObject(this.context) as ParserState)
-		}
-
-		return this.addCharAndReturnThis(c, currentPosition)
-	}
-}
-
-class ParseStateObject extends ParseStateCommon {
-	override nextChar(c: string, currentPosition: number): Result<ParserState, RelationTupleSyntaxError> {
-		if (c === '#') {
-			if(this.accValue.length === 0) {
-				return error( new RelationTupleSyntaxError(`object cannot be empty`))
-			}
-			this.context.relationTuple.object = this.accValue
-			return value(new ParseStateRelation(this.context) as ParserState)
-		}
-		return this.addCharAndReturnThis(c, currentPosition)
-	}
-}
-
-class ParseStateRelation extends ParseStateCommon {
-	override nextChar(c: string, currentPosition: number): Result<ParserState, RelationTupleSyntaxError> {
-		if (c === '@') {
-			if(this.accValue.length === 0) {
-				return error( new RelationTupleSyntaxError(`relation cannot be empty`))
-			}
-			this.context.relationTuple.relation = this.accValue
-			return value(new ParseStateSubjectIdOrSubjectSetNamespace(this.context) as ParserState)
-		}
-
-		return this.addCharAndReturnThis(c, currentPosition)
-	}
-}
-
-class ParseStateSubjectIdOrSubjectSetNamespace extends ParseStateCommon {
-	override nextChar(c: string, currentPosition: number): Result<ParserState, RelationTupleSyntaxError> {
-		if (c === ':') {
-			if(this.accValue.length === 0) {
-				return error( new RelationTupleSyntaxError(`namespace of subjectSet cannot be empty`))
-			}
-			this.context.relationTuple.subjectIdOrSet = { namespace: this.accValue }
-			return value(new ParseStateSubjectSetObject(this.context) as ParserState)
-		} else if (
-			(this.accValue.length === 0 && c === '(') ||
-			(currentPosition === this.context.wholeInput.length - 1 && c === ')')
-		) {
-			return value(this as ParserState)
-		}
-		return this.addCharAndReturnThis(c, currentPosition)
-	}
-
-	override finish(): Result<RelationTuple, RelationTupleSyntaxError> {
-		if(this.accValue.length === 0) {
-			return error( new RelationTupleSyntaxError(`subjectId cannot be empty`))
-		}
-		this.context.relationTuple.subjectIdOrSet = this.accValue
-		return value(this.context.relationTuple as RelationTuple)
-	}
-}
-
-class ParseStateSubjectSetObject extends ParseStateCommon {
-	override nextChar(c: string, currentPosition: number): Result<ParserState, RelationTupleSyntaxError> {
-		if (c === '#') {
-			if(this.accValue.length === 0) {
-				return error( new RelationTupleSyntaxError(`object of subjectSet cannot be empty`))
-			}
-			const castRelationTuple = this.context.relationTuple as PartialRelationTupleWithSubjectSet
-			castRelationTuple.subjectIdOrSet.object = this.accValue
-			return value(new ParseStateSubjectSetRelation(this.context) as ParserState)
-		} else if (currentPosition === this.context.wholeInput.length - 1 && c === ')') {
-			return value(this as ParserState)
-		}
-
-		return this.addCharAndReturnThis(c, currentPosition)
-	}
-
-	override finish(): Result<RelationTuple, RelationTupleSyntaxError> {
-		if(this.accValue.length === 0) {
-			return error( new RelationTupleSyntaxError(`object of subjectSet cannot be empty`))
-		}
-		if(!this.context.config.allowEmptyRelationInSubjectSet) {
-			return error( new RelationTupleSyntaxError(`relation of subjectSet cannot be empty`))
-		}
-
-		const castRelationTuple = this.context.relationTuple as PartialRelationTupleWithSubjectSet
-		castRelationTuple.subjectIdOrSet.object = this.accValue
-		castRelationTuple.subjectIdOrSet.relation = ''
-		return value(this.context.relationTuple as RelationTuple)
-	}
-
-}
-
-class ParseStateSubjectSetRelation extends ParseStateCommon {
-	override nextChar(c: string, currentPosition: number): Result<ParserState, RelationTupleSyntaxError> {
-		if (currentPosition === this.context.wholeInput.length - 1 && c === ')') {
-			return value(this as ParserState)
-		}
-		return this.addCharAndReturnThis(c, currentPosition)
-	}
-
-	override finish(): Result<RelationTuple, RelationTupleSyntaxError> {
-		if(this.accValue.length === 0 && !this.context.config.allowEmptyRelationInSubjectSet) {
-			return error( new RelationTupleSyntaxError(`relation of subjectSet cannot be empty`))
-		}
-
-		const castRelationTuple = this.context.relationTuple as PartialRelationTupleWithSubjectSet
-		castRelationTuple.subjectIdOrSet.relation = this.accValue
-		return value(this.context.relationTuple as RelationTuple)
-	}
-}
+import { error, Result, value } from 'defekt'
+import { RelationTuple } from './relation-tuple'
+import { CharStreams, CommonTokenStream } from 'antlr4ts'
+import { RelationTupleLexer } from './generated/antlr/RelationTupleLexer'
+import { RelationTupleParser } from './generated/antlr/RelationTupleParser'
+import { MyParserErrorListener, MyRelationTupleVisitor } from './relation-tuple-antlr'
+import { RelationTupleSyntaxError } from './errors/relation-tuple-syntax.error'
+import { UnknownError } from './errors/unknown.error'
 
 /**
  * Parses the given string to a {@link RelationTuple}.
@@ -192,30 +20,33 @@ class ParseStateSubjectSetRelation extends ParseStateCommon {
  * The characters `:@#()` are reserved for syntax use only (=> forbidden in values)
  *
  * @param str
- * @param configOverride overrides the values of {@link DefaultRelationTupleParserConfig}
  * @return The parsed {@link RelationTuple} or {@link RelationTupleSyntaxError} in case of an invalid string.
  */
-export const parseRelationTuple = (
-	str: string,
-	configOverride: RelationTupleParserConfigOverride = {},
-): Result<RelationTuple, RelationTupleSyntaxError> => {
+export const parseRelationTuple = (str: string): Result<RelationTuple, RelationTupleSyntaxError | UnknownError> => {
 	const trimmedStr = str.trim()
 
-	const context: ParseContext = {
-		relationTuple: {},
-		wholeInput: trimmedStr,
-		config: { ...DefaultRelationTupleParserConfig, ...configOverride },
-	}
-	let currentState: ParserState = new ParseStateNamespace(context)
+	const inputStream = CharStreams.fromString(trimmedStr)
+	const lexer = new RelationTupleLexer(inputStream)
+	const tokenStream = new CommonTokenStream(lexer)
+	const parser = new RelationTupleParser(tokenStream)
 
-	for (let i = 0; i < trimmedStr.length; i++) {
-		const c = trimmedStr[i]
-		const newState = currentState.nextChar(c, i)
-		if (newState.hasError()) {
-			return error(newState.error)
+	const parserErrorListener = new MyParserErrorListener(trimmedStr)
+
+	parser.removeErrorListeners()
+	parser.addErrorListener(parserErrorListener)
+	const visitor = new MyRelationTupleVisitor()
+	try {
+		const parsedRelationTuple = visitor.visit(parser.relationTuple())
+
+		if (parserErrorListener.errors.length > 0) {
+			return error(new RelationTupleSyntaxError({ data: { errors: parserErrorListener.errors } }))
 		}
-		currentState = newState.value
-	}
 
-	return currentState.finish()
+		return value(parsedRelationTuple)
+	} catch (e) {
+		if (e instanceof RelationTupleSyntaxError) {
+			return error(e)
+		}
+		return error(new UnknownError({ data: e }))
+	}
 }

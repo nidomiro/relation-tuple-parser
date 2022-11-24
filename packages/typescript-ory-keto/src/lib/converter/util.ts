@@ -14,7 +14,7 @@ export function setInRelationTupleLike<R extends KetoRelationTupleLike>(oryReque
 		const subjectSet = new KetoGrpcRelationTuple.SubjectSet()
 		subjectSet.setNamespace(tuple.subjectIdOrSet.namespace)
 		subjectSet.setObject(tuple.subjectIdOrSet.object)
-		subjectSet.setRelation(tuple.subjectIdOrSet.relation)
+		subjectSet.setRelation(tuple.subjectIdOrSet.relation ?? '')
 		subject.setSet(subjectSet)
 	}
 	oryRequest.setSubject(subject)
@@ -22,7 +22,10 @@ export function setInRelationTupleLike<R extends KetoRelationTupleLike>(oryReque
 	return oryRequest
 }
 
-export const setInRelationTupleLikeWithReplacements = <T extends Record<string, string>, R extends KetoRelationTupleLike>(
+export const setInRelationTupleLikeWithReplacements = <
+	T extends Record<string, string>,
+	R extends KetoRelationTupleLike,
+>(
 	oryRequest: R,
 	tuple: RelationTupleWithReplacements<T>,
 	replacements: T,
@@ -38,7 +41,7 @@ export const setInRelationTupleLikeWithReplacements = <T extends Record<string, 
 		const subjectSet = new KetoGrpcRelationTuple.SubjectSet()
 		subjectSet.setNamespace(tuple.subjectIdOrSet.namespace(replacements))
 		subjectSet.setObject(tuple.subjectIdOrSet.object(replacements))
-		subjectSet.setRelation(tuple.subjectIdOrSet.relation(replacements))
+		subjectSet.setRelation(tuple.subjectIdOrSet.relation(replacements) ?? '')
 		subject.setSet(subjectSet)
 	}
 	oryRequest.setSubject(subject)
