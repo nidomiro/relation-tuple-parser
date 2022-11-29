@@ -1,3 +1,4 @@
+import { get as lodashGet } from 'lodash'
 import { TwoWayMap } from '../util/two-way-map'
 import { ReplaceableString } from './relation-tuple-with-replacements'
 import { ReplacementValues } from './replacement-values'
@@ -35,7 +36,7 @@ function generateReplacerFunctions<T extends ReplacementValues>(
 	sortedFoundReplacements.forEach(({ start, endExcl, prop }) => {
 		const strPart = str.substring(pos, Math.max(0, start)) // let calculation happen before
 		resultStringParts.push(() => strPart)
-		resultStringParts.push((replacements) => String(replacements[prop]))
+		resultStringParts.push((replacements) => String(lodashGet(replacements, prop)))
 
 		pos = endExcl
 	})
@@ -53,19 +54,21 @@ export const generateReplacerFunction = <T extends ReplacementValues>(
 ): ReplaceableString<T> => {
 	const foundReplacements = findReplacementsInString(str, possibleReplacements)
 
-	if (foundReplacements.length <= 0) {
-		return () => str
-	} else if (
+	const hasNoReplacements = foundReplacements.length === 0
+	const isWholeStringReplacement =
 		foundReplacements.length === 1 &&
 		foundReplacements[0].start === 0 &&
 		foundReplacements[0].endExcl === str.length
-	) {
-		return (replacements) => String(replacements[foundReplacements[0].prop])
+
+	if (hasNoReplacements) {
+		return () => str
+	} else if (isWholeStringReplacement) {
+		return (replacements) => String(lodashGet(replacements, foundReplacements[0].prop))
 	}
 
-	const sortedFoundReplacements = foundReplacements.sort((a, b) => a.start - b.start)
+	const foundReplacementsSortedByStartIndexASC = foundReplacements.sort((a, b) => a.start - b.start)
 
-	const resultStringParts = generateReplacerFunctions(sortedFoundReplacements, str)
+	const resultStringParts = generateReplacerFunctions(foundReplacementsSortedByStartIndexASC, str)
 
 	return (replacements) => {
 		return resultStringParts.map((x) => x(replacements)).join('')

@@ -18,6 +18,7 @@
 		"antlr4ts": "^0.5.0-alpha.4",
 		"assert-never": "^1.2.1",
 		"defekt": "^9.3.1",
+		"lodash": "4.17.21",
 		"reflect-metadata": "^0.1.13",
 		"rxjs": "^7.0.0",
 		"tslib": "^2.4.1"
@@ -35,6 +36,7 @@
 		"@nrwl/rollup": "15.2.1",
 		"@nrwl/workspace": "15.2.1",
 		"@types/jest": "28.1.1",
+		"@types/lodash": "^4.14.190",
 		"@types/node": "18.7.1",
 		"@typescript-eslint/eslint-plugin": "^5.36.1",
 		"@typescript-eslint/parser": "^5.36.1",
