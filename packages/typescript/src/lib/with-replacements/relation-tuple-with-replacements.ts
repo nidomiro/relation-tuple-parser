@@ -1,12 +1,14 @@
 import { RelationTuple } from '../relation-tuple'
 import { ReplacementValues } from './replacement-values'
 
-export type ReplaceableString<T extends ReplacementValues> = (replacements: T) => string
+export type ReplaceableString<T extends ReplacementValues, R extends string | undefined = string> = (
+	replacements: T,
+) => R
 
 export interface SubjectSetWithReplacements<T extends ReplacementValues> {
 	namespace: ReplaceableString<T>
 	object: ReplaceableString<T>
-	relation: ReplaceableString<T>
+	relation: ReplaceableString<T, string | undefined>
 }
 
 export interface RelationTupleWithReplacements<T extends ReplacementValues> {

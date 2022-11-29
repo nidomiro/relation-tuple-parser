@@ -1,8 +1,8 @@
-import { parseRelationTuple, RelationTupleSyntaxError } from './relation-tuple-parser'
+import { parseRelationTuple } from './relation-tuple-parser'
 import { type RelationTuple } from './relation-tuple'
 
-function fail(reason = "fail was called in a test.") {
-	throw new Error(reason);
+function fail(reason = 'fail was called in a test.') {
+	throw new Error(reason)
 }
 
 function nsToMs(ns: bigint): bigint
@@ -64,7 +64,7 @@ describe('parseRelationTuple tests', () => {
 					subjectIdOrSet: {
 						namespace: 'subjectNamespace',
 						object: 'subjectObject',
-						relation: 'subjectRelation'
+						relation: 'subjectRelation',
 					},
 				} as RelationTuple,
 			],
@@ -77,7 +77,7 @@ describe('parseRelationTuple tests', () => {
 					subjectIdOrSet: {
 						namespace: 'subjectNamespace',
 						object: 'subjectObject',
-						relation: 'subjectRelation'
+						relation: 'subjectRelation',
 					},
 				} as RelationTuple,
 			],
@@ -90,7 +90,7 @@ describe('parseRelationTuple tests', () => {
 					subjectIdOrSet: {
 						namespace: 'subjectNamespace',
 						object: 'subjectObject',
-						relation: 'subjectRelation'
+						relation: 'subjectRelation',
 					},
 				} as RelationTuple,
 			],
@@ -103,7 +103,6 @@ describe('parseRelationTuple tests', () => {
 					subjectIdOrSet: {
 						namespace: 'subjectNamespace',
 						object: 'subjectObject',
-						relation: ''
 					},
 				} as RelationTuple,
 			],
@@ -116,7 +115,6 @@ describe('parseRelationTuple tests', () => {
 					subjectIdOrSet: {
 						namespace: 'subjectNamespace',
 						object: 'subjectObject',
-						relation: ''
 					},
 				} as RelationTuple,
 			],
@@ -209,20 +207,14 @@ describe('parseRelationTuple tests', () => {
 				console.log(`Result has value: `, result.value)
 			}
 
-			if(result.hasValue()) {
-				fail(`Expected result to contain an error but got a value: \n${JSON.stringify(result.value, undefined, 2)}`)
-			}
-		})
-
-		it(`rejects empty relation in subjectSet if configured`, () => {
-			const result = parseRelationTuple('namespace:object#relation@namespace:object', {allowEmptyRelationInSubjectSet: false})
-
 			if (result.hasValue()) {
-				console.log(`Result has value: `, result.value)
-			}
-
-			if(result.hasValue()) {
-				fail(`Expected result to contain an error but got a value:  \n${JSON.stringify(result.value, undefined, 2)}`)
+				fail(
+					`Expected result to contain an error but got a value: \n${JSON.stringify(
+						result.value,
+						undefined,
+						2,
+					)}`,
+				)
 			}
 		})
 	})

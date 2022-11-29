@@ -35,6 +35,17 @@
 				"jestConfig": "packages/typescript/jest.config.ts",
 				"passWithNoTests": true
 			}
+		},
+		"generate-parser": {
+			"executor": "nx:run-commands",
+			"options": {
+				"commands": [
+					"rm -rf src/lib/generated/antlr",
+					"antlr4ts -no-listener -visitor RelationTuple.g4 -o src/lib/generated/antlr"
+				],
+				"cwd": "packages/typescript",
+				"parallel": false
+			}
 		}
 	},
 	"tags": ["typescript"]
