@@ -11,17 +11,43 @@ const delimiter = '\u2744'
 
 export type RelationTupleStringGenerator<T> = (args: T) => string
 
+const InternalValues = Symbol('internalValues')
+
+type ProxyState = {
+	[InternalValues]: {
+		path?: Array<string>
+		kind: 'root' | 'child'
+	}
+}
+
 export const parseRelationTupleWithReplacements = <T extends ReplacementValues>(
 	relationTupleStringGenerator: RelationTupleStringGenerator<T>,
 ): Result<RelationTupleWithReplacements<T>, RelationTupleSyntaxError | UnknownError> => {
 	const usedPlaceholder = new Map<keyof T, string>()
-	const argsProxy = new Proxy<T>({} as T, {
-		get(target: T, p: string): string {
-			const placeholder = `${delimiter}${p}${delimiter}`
-			usedPlaceholder.set(p, placeholder)
-			return placeholder
+
+	const registerAndReturnPlaceholder = (path: Array<string>) => {
+		const pathAsString = path.join('.')
+		const placeholder = `${delimiter}${pathAsString}${delimiter}`
+		usedPlaceholder.set(pathAsString, placeholder)
+		return placeholder
+	}
+
+	const validator: ProxyHandler<T & ProxyState> = {
+		get(target: T & ProxyState, p: string | symbol): unknown {
+			const path = target[InternalValues].kind === 'root' ? [] : target[InternalValues].path
+
+			if (p === 'toString' || p === Symbol.toPrimitive) {
+				return () => registerAndReturnPlaceholder(path ?? [])
+			}
+			if (typeof p === 'symbol') {
+				throw new Error('Symbols are not supported as keys')
+			}
+			path?.push(p)
+			return new Proxy<T & ProxyState>({ ...target, [InternalValues]: { path, kind: 'child' } }, validator)
 		},
-	})
+	}
+
+	const argsProxy = new Proxy<T & ProxyState>({ [InternalValues]: { kind: 'root' } } as T & ProxyState, validator)
 
 	const relationTupleStr = relationTupleStringGenerator(argsProxy)
 
