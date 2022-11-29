@@ -6,6 +6,7 @@ import { TwoWayMap } from '../util/two-way-map'
 import { ReplacementValues } from './replacement-values'
 import { RelationTupleSyntaxError } from '../errors/relation-tuple-syntax.error'
 import { UnknownError } from '../errors/unknown.error'
+import { createAccessToPathProxy } from '../util/access-to-path-proxy'
 
 const delimiter = '\u2744'
 
@@ -15,13 +16,15 @@ export const parseRelationTupleWithReplacements = <T extends ReplacementValues>(
 	relationTupleStringGenerator: RelationTupleStringGenerator<T>,
 ): Result<RelationTupleWithReplacements<T>, RelationTupleSyntaxError | UnknownError> => {
 	const usedPlaceholder = new Map<keyof T, string>()
-	const argsProxy = new Proxy<T>({} as T, {
-		get(target: T, p: string): string {
-			const placeholder = `${delimiter}${p}${delimiter}`
-			usedPlaceholder.set(p, placeholder)
-			return placeholder
-		},
-	})
+
+	const registerAndReturnPlaceholder = (path: Array<string>) => {
+		const pathAsString = path.join('.')
+		const placeholder = `${delimiter}${pathAsString}${delimiter}`
+		usedPlaceholder.set(pathAsString, placeholder)
+		return placeholder
+	}
+
+	const argsProxy = createAccessToPathProxy<T>(registerAndReturnPlaceholder)
 
 	const relationTupleStr = relationTupleStringGenerator(argsProxy)
 

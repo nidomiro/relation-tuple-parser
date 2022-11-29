@@ -118,4 +118,63 @@ describe('parseRelationTupleWithReplacements tests', () => {
 			subjectIdOrSet: 'subject',
 		} as RelationTuple)
 	})
+
+	describe('nested replacements', () => {
+		it('with subject', () => {
+			const replacements = {
+				object: {
+					namespace: 'aaa',
+					object: 'bbb',
+				},
+				relation: 'ccc',
+				nest: {
+					nest: {
+						subject: 'ddd',
+					},
+				},
+			}
+
+			const relationTupleWithReplacements = parseRelationTupleWithReplacements<typeof replacements>(
+				({ object, relation, nest }) => `${object.namespace}:${object.object}#${relation}@${nest.nest.subject}`,
+			).unwrapOrThrow()
+
+			const relationTuple = applyReplacements(relationTupleWithReplacements, replacements)
+
+			expect(relationTuple).toEqual({
+				namespace: 'aaa',
+				object: 'bbb',
+				relation: 'ccc',
+				subjectIdOrSet: 'ddd',
+			} as RelationTuple)
+		})
+
+		it('with subject and replacements inside parts', () => {
+			const replacements = {
+				object: {
+					namespace: 'aaa',
+					object: 'bbb',
+				},
+				relation: 'ccc',
+				nest: {
+					nest: {
+						subject: 'ddd',
+					},
+				},
+			}
+
+			const relationTupleWithReplacements = parseRelationTupleWithReplacements<typeof replacements>(
+				({ object, relation, nest }) =>
+					`${object.namespace}:${object.namespace}${object.object}#df${relation}dfg${nest.nest.subject}sdf@asd${nest.nest.subject}`,
+			).unwrapOrThrow()
+
+			const relationTuple = applyReplacements(relationTupleWithReplacements, replacements)
+
+			expect(relationTuple).toEqual({
+				namespace: 'aaa',
+				object: 'aaabbb',
+				relation: 'dfcccdfgdddsdf',
+				subjectIdOrSet: 'asdddd',
+			} as RelationTuple)
+		})
+	})
 })

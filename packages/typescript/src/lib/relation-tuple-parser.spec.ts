@@ -125,7 +125,7 @@ describe('parseRelationTuple tests', () => {
 		})
 	})
 
-	describe('performance tests', () => {
+	describe.skip('performance tests', () => {
 		it('with subject', () => {
 			const relationTuples = Array.from({ length: 100 }, (_, i) => generateRelationTuple(i, false))
 
