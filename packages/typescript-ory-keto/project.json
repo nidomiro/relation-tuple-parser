@@ -11,7 +11,7 @@
 				"outputPath": "dist/packages/typescript-ory-keto",
 				"main": "packages/typescript-ory-keto/src/index.ts",
 				"tsConfig": "packages/typescript-ory-keto/tsconfig.lib.json",
-				"assets": ["packages/typescript-ory-keto/*.md"]
+				"assets": ["packages/typescript-ory-keto/*.md", "LICENSE.md"]
 			}
 		},
 		"publish": {
