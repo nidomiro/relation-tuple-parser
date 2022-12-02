@@ -1,52 +1,52 @@
 {
-	"$schema": "../../node_modules/nx/schemas/project-schema.json",
-	"name": "typescript",
-	"sourceRoot": "packages/typescript/src",
-	"projectType": "library",
-	"targets": {
-		"build": {
-			"executor": "@nrwl/js:tsc",
-			"outputs": ["{options.outputPath}"],
-			"options": {
-				"outputPath": "dist/packages/typescript",
-				"main": "packages/typescript/src/index.ts",
-				"tsConfig": "packages/typescript/tsconfig.lib.json",
-				"assets": ["packages/typescript/*.md", "LICENSE.md"]
-			}
-		},
-		"publish": {
-			"executor": "nx:run-commands",
-			"options": {
-				"command": "node tools/scripts/publish.mjs typescript {args.ver} {args.tag}"
-			},
-			"dependsOn": ["build"]
-		},
-		"lint": {
-			"executor": "@nrwl/linter:eslint",
-			"outputs": ["{options.outputFile}"],
-			"options": {
-				"lintFilePatterns": ["packages/typescript/**/*.ts"]
-			}
-		},
-		"test": {
-			"executor": "@nrwl/jest:jest",
-			"outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
-			"options": {
-				"jestConfig": "packages/typescript/jest.config.ts",
-				"passWithNoTests": true
-			}
-		},
-		"generate-parser": {
-			"executor": "nx:run-commands",
-			"options": {
-				"commands": [
-					"rm -rf src/lib/generated/antlr",
-					"antlr4ts -no-listener -visitor RelationTuple.g4 -o src/lib/generated/antlr"
-				],
-				"cwd": "packages/typescript",
-				"parallel": false
-			}
-		}
-	},
-	"tags": ["typescript"]
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "name": "typescript",
+    "sourceRoot": "packages/typescript/src",
+    "projectType": "library",
+    "targets": {
+        "build": {
+            "executor": "@nrwl/js:tsc",
+            "outputs": ["{options.outputPath}"],
+            "options": {
+                "outputPath": "dist/packages/typescript",
+                "main": "packages/typescript/src/index.ts",
+                "tsConfig": "packages/typescript/tsconfig.lib.json",
+                "assets": ["packages/typescript/*.md", "LICENSE.md"]
+            }
+        },
+        "publish": {
+            "executor": "nx:run-commands",
+            "options": {
+                "command": "node tools/scripts/publish.mjs typescript {args.ver} {args.tag}"
+            },
+            "dependsOn": ["build"]
+        },
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/typescript/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+            "options": {
+                "jestConfig": "packages/typescript/jest.config.ts",
+                "passWithNoTests": true
+            }
+        },
+        "generate-parser": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "rm -rf src/lib/generated/antlr",
+                    "antlr4ts -no-listener -visitor RelationTuple.g4 -o src/lib/generated/antlr"
+                ],
+                "cwd": "packages/typescript",
+                "parallel": false
+            }
+        }
+    },
+    "tags": ["typescript"]
 }

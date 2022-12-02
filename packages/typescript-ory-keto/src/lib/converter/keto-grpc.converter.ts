@@ -5,38 +5,34 @@ import { setInRelationTupleLike, setInRelationTupleLikeWithReplacements } from '
 
 export function createRelationTuple(tuple: RelationTuple): KetoGrpcRelationTuple
 export function createRelationTuple<T extends Record<string, string>>(
-	tuple: RelationTupleWithReplacements<T>,
-	replacements: T,
+    tuple: RelationTupleWithReplacements<T>,
+    replacements: T,
 ): KetoGrpcRelationTuple
 export function createRelationTuple<T extends Record<string, string>>(
-	tuple: RelationTuple | RelationTupleWithReplacements<T>,
-	replacements?: T,
+    tuple: RelationTuple | RelationTupleWithReplacements<T>,
+    replacements?: T,
 ): KetoGrpcRelationTuple {
+    if (isRelationTuple(tuple)) {
+        return setInRelationTupleLike(new KetoGrpcRelationTuple(), tuple)
+    }
 
-	if(isRelationTuple(tuple)) {
-		return setInRelationTupleLike(new KetoGrpcRelationTuple(), tuple)
-	}
-
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	return setInRelationTupleLikeWithReplacements(new KetoGrpcRelationTuple(), tuple, replacements!)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return setInRelationTupleLikeWithReplacements(new KetoGrpcRelationTuple(), tuple, replacements!)
 }
 
-export function createCheckRequest(
-	tuple: RelationTuple,
+export function createCheckRequest(tuple: RelationTuple): KetoGrpcCheckService
+export function createCheckRequest<T extends Record<string, string>>(
+    tuple: RelationTupleWithReplacements<T>,
+    replacements: T,
 ): KetoGrpcCheckService
 export function createCheckRequest<T extends Record<string, string>>(
-	tuple: RelationTupleWithReplacements<T>,
-	replacements: T,
-): KetoGrpcCheckService
-export function createCheckRequest<T extends Record<string, string>>(
-	tuple: RelationTuple | RelationTupleWithReplacements<T>,
-	replacements?: T,
+    tuple: RelationTuple | RelationTupleWithReplacements<T>,
+    replacements?: T,
 ): KetoGrpcCheckService {
+    if (isRelationTuple(tuple)) {
+        return setInRelationTupleLike(new KetoGrpcCheckService(), tuple)
+    }
 
-	if(isRelationTuple(tuple)) {
-		return setInRelationTupleLike(new KetoGrpcCheckService(), tuple)
-	}
-
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	return setInRelationTupleLikeWithReplacements(new KetoGrpcCheckService(), tuple, replacements!)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return setInRelationTupleLikeWithReplacements(new KetoGrpcCheckService(), tuple, replacements!)
 }

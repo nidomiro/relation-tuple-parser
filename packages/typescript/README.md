@@ -34,16 +34,16 @@ After Parsing you get an object in the format:
 
 ```ts
 interface SubjectSet {
-	namespace: string
-	object: string
-	relation: string
+    namespace: string
+    object: string
+    relation: string
 }
 
 interface RelationTuple {
-	namespace: string
-	object: string
-	relation: string
-	subjectIdOrSet: string | SubjectSet
+    namespace: string
+    object: string
+    relation: string
+    subjectIdOrSet: string | SubjectSet
 }
 ```
 
@@ -54,16 +54,17 @@ import { parseRelationTuple } from '@nidomiro/relation-tuple-parser'
 
 const result = parseRelationTuple('sharedFiles:a.txt#access@(dirs:b#access)')
 const value = result.unwrapOrThrow()
-/* value = {
-				namespace: 'sharedFiles',
-				object: 'a.txt',
-				relation: 'access',
-				subjectIdOrSet: {
-					namespace: 'dirs',
-					object: 'b',
-					relation: 'access',
-				},
-			}
+/* 
+value = {
+    namespace: 'sharedFiles',
+    object: 'a.txt',
+    relation: 'access',
+    subjectIdOrSet: {
+        namespace: 'dirs',
+        object: 'b',
+        relation: 'access',
+    },
+}
  */
 ```
 
@@ -90,15 +91,16 @@ const valueWithreplacements = result.unwrapOrThrow()
  * Execute this at evaluation time (e.g. every incomming Request) to get the actual Relation tuple to evaluate against.
  */
 const relationTuple = applyReplacements(valueWithreplacements, {
-	userId: 'my_user_id',
+    userId: 'my_user_id',
 })
 
-/*	relationTuple = {
-						namespace: 'groups',
-						object: 'admin',
-						relation: 'member',
-						subjectIdOrSet: 'my_user_id',
-					}
+/*
+relationTuple = {
+    namespace: 'groups',
+    object: 'admin',
+    relation: 'member',
+    subjectIdOrSet: 'my_user_id',
+}
  */
 ```
 
