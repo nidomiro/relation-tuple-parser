@@ -3,3 +3,4 @@
 /dist
 /coverage
 /packages/typescript/src/lib/generated
+/packages/rust/target
