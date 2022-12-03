@@ -1,0 +1,34 @@
+{
+  "name": "rust",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/rust/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cargo build",
+        "cwd": "packages/rust"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cargo test",
+        "cwd": "packages/rust"
+      }
+    },
+    "generate-parser": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "rm -rf src/antlr",
+          "java -jar  ./antlr4-4.8-2-SNAPSHOT-complete.jar -Dlanguage=Rust ./RelationTuple.g4 -o src/antlr -visitor"
+        ],
+        "cwd": "packages/rust",
+        "parallel": false
+      }
+    }
+  },
+  "tags": []
+}
