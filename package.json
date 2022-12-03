@@ -3,9 +3,11 @@
     "version": "0.0.0",
     "license": "MIT",
     "scripts": {
+        "postinstall": "npm run patch-antlr4ts",
         "nx": "nx",
         "format": "nx format",
-        "format-all": "nx format --all"
+        "format-all": "nx format --all",
+        "patch-antlr4ts": "cd tools/antlr4ts-patch && jar uf ../../node_modules/antlr4ts-cli/target/antlr4-typescript-4.9.0-SNAPSHOT-complete.jar org/antlr/v4/tool/templates/codegen/TypeScript/TypeScript.stg"
     },
     "private": true,
     "dependencies": {
