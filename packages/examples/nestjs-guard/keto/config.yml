@@ -1,18 +1,18 @@
 version: v0.10.0-alpha.0
 
 log:
-    level: debug
+  level: debug
 
 serve:
-    read:
-        host: 0.0.0.0
-        port: 4466
-    write:
-        host: 0.0.0.0
-        port: 4467
+  read:
+    host: 0.0.0.0
+    port: 4466
+  write:
+    host: 0.0.0.0
+    port: 4467
 
 namespaces:
-    - id: 1
-      name: groups
+  - id: 1
+    name: groups
 
 dsn: memory

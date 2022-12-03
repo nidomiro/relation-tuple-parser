@@ -7,16 +7,16 @@ import { KetoWriteClientService } from './keto-write-client.service'
 import { KetoReadClientService } from './keto-read-client.service'
 
 @Module({
-    imports: [],
-    controllers: [AppController],
-    providers: [
-        KetoReadClientService,
-        KetoWriteClientService,
-        KetoGuard,
-        {
-            provide: APP_GUARD,
-            useExisting: KetoGuard,
-        },
-    ],
+  imports: [],
+  controllers: [AppController],
+  providers: [
+    KetoReadClientService,
+    KetoWriteClientService,
+    KetoGuard,
+    {
+      provide: APP_GUARD,
+      useExisting: KetoGuard,
+    },
+  ],
 })
 export class AppModule {}

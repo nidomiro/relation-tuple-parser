@@ -8,19 +8,19 @@ import { KetoHttpConverter } from '@nidomiro/relation-tuple-parser-ory-keto'
 
 @Injectable()
 export class KetoWriteClientService {
-    private readonly _writeClient: WriteApi
+  private readonly _writeClient: WriteApi
 
-    constructor() {
-        this._writeClient = new WriteApi(undefined, KETO_WRITE_API_HTTP)
-    }
+  constructor() {
+    this._writeClient = new WriteApi(undefined, KETO_WRITE_API_HTTP)
+  }
 
-    async addRelationTuple(tuple: RelationTuple): Promise<Result<true, UnknownError>> {
-        const query = KetoHttpConverter.createRelationQuery(tuple)
-        try {
-            await this._writeClient.createRelationTuple(query)
-            return value(true)
-        } catch (e) {
-            return error(new UnknownError({ data: e }))
-        }
+  async addRelationTuple(tuple: RelationTuple): Promise<Result<true, UnknownError>> {
+    const query = KetoHttpConverter.createRelationQuery(tuple)
+    try {
+      await this._writeClient.createRelationTuple(query)
+      return value(true)
+    } catch (e) {
+      return error(new UnknownError({ data: e }))
     }
+  }
 }

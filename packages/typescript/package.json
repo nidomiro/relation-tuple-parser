@@ -1,32 +1,32 @@
 {
-    "name": "@nidomiro/relation-tuple-parser",
-    "version": "0.0.1",
-    "type": "commonjs",
-    "private": false,
-    "license": "MIT",
-    "author": {
-        "name": "Niclas Roßberger",
-        "url": "https://nidomiro.de"
-    },
-    "bugs": {
-        "url": "https://github.com/nidomiro/relation-tuple-parser/issues"
-    },
-    "homepage": "https://github.com/nidomiro/relation-tuple-parser/tree/main/packages/typescript",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/nidomiro/relation-tuple-parser.git",
-        "directory": "packages/typescript"
-    },
-    "keywords": [
-        "typescript",
-        "util",
-        "type",
-        "ts",
-        "helper",
-        "relation-tuple",
-        "relation tuple",
-        "relationtuple",
-        "Zanzibar",
-        "Google Zanzibar"
-    ]
+  "name": "@nidomiro/relation-tuple-parser",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "private": false,
+  "license": "MIT",
+  "author": {
+    "name": "Niclas Roßberger",
+    "url": "https://nidomiro.de"
+  },
+  "bugs": {
+    "url": "https://github.com/nidomiro/relation-tuple-parser/issues"
+  },
+  "homepage": "https://github.com/nidomiro/relation-tuple-parser/tree/main/packages/typescript",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nidomiro/relation-tuple-parser.git",
+    "directory": "packages/typescript"
+  },
+  "keywords": [
+    "typescript",
+    "util",
+    "type",
+    "ts",
+    "helper",
+    "relation-tuple",
+    "relation tuple",
+    "relationtuple",
+    "Zanzibar",
+    "Google Zanzibar"
+  ]
 }

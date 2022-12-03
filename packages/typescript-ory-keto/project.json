@@ -1,41 +1,41 @@
 {
-    "$schema": "../../node_modules/nx/schemas/project-schema.json",
-    "name": "typescript-ory-keto",
-    "sourceRoot": "packages/typescript-ory-keto/src",
-    "projectType": "library",
-    "targets": {
-        "build": {
-            "executor": "@nrwl/js:tsc",
-            "outputs": ["{options.outputPath}"],
-            "options": {
-                "outputPath": "dist/packages/typescript-ory-keto",
-                "main": "packages/typescript-ory-keto/src/index.ts",
-                "tsConfig": "packages/typescript-ory-keto/tsconfig.lib.json",
-                "assets": ["packages/typescript-ory-keto/*.md", "LICENSE.md"]
-            }
-        },
-        "publish": {
-            "executor": "nx:run-commands",
-            "options": {
-                "command": "node tools/scripts/publish.mjs typescript-ory-keto {args.ver} {args.tag}"
-            },
-            "dependsOn": ["build"]
-        },
-        "lint": {
-            "executor": "@nrwl/linter:eslint",
-            "outputs": ["{options.outputFile}"],
-            "options": {
-                "lintFilePatterns": ["packages/typescript-ory-keto/**/*.ts"]
-            }
-        },
-        "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
-            "options": {
-                "jestConfig": "packages/typescript-ory-keto/jest.config.ts",
-                "passWithNoTests": true
-            }
-        }
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "typescript-ory-keto",
+  "sourceRoot": "packages/typescript-ory-keto/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/typescript-ory-keto",
+        "main": "packages/typescript-ory-keto/src/index.ts",
+        "tsConfig": "packages/typescript-ory-keto/tsconfig.lib.json",
+        "assets": ["packages/typescript-ory-keto/*.md", "LICENSE.md"]
+      }
     },
-    "tags": ["typescript"]
+    "publish": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/scripts/publish.mjs typescript-ory-keto {args.ver} {args.tag}"
+      },
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/typescript-ory-keto/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/typescript-ory-keto/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["typescript"]
 }

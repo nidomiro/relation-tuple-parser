@@ -34,16 +34,16 @@ After Parsing you get an object in the format:
 
 ```ts
 interface SubjectSet {
-    namespace: string
-    object: string
-    relation: string
+  namespace: string
+  object: string
+  relation: string
 }
 
 interface RelationTuple {
-    namespace: string
-    object: string
-    relation: string
-    subjectIdOrSet: string | SubjectSet
+  namespace: string
+  object: string
+  relation: string
+  subjectIdOrSet: string | SubjectSet
 }
 ```
 
@@ -91,7 +91,7 @@ const valueWithreplacements = result.unwrapOrThrow()
  * Execute this at evaluation time (e.g. every incomming Request) to get the actual Relation tuple to evaluate against.
  */
 const relationTuple = applyReplacements(valueWithreplacements, {
-    userId: 'my_user_id',
+  userId: 'my_user_id',
 })
 
 /*

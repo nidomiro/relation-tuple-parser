@@ -1,13 +1,13 @@
 version: '3'
 services:
-    keto:
-        image: oryd/keto:v0.10.0-alpha.0
-        ports:
-            - '4466:4466'
-            - '4467:4467'
-        command: serve -c /home/ory/keto.yml
-        restart: on-failure
-        volumes:
-            - type: bind
-              source: keto/config.yml
-              target: /home/ory/keto.yml
+  keto:
+    image: oryd/keto:v0.10.0-alpha.0
+    ports:
+      - '4466:4466'
+      - '4467:4467'
+    command: serve -c /home/ory/keto.yml
+    restart: on-failure
+    volumes:
+      - type: bind
+        source: keto/config.yml
+        target: /home/ory/keto.yml

@@ -10,32 +10,32 @@ import { KetoGrpcConverter } from '@nidomiro/relation-tuple-parser-ory-keto'
 
 @Injectable()
 export class KetoReadClientService {
-    private readonly _checkClient: CheckServiceClient
+  private readonly _checkClient: CheckServiceClient
 
-    constructor() {
-        this._checkClient = new CheckServiceClient(KETO_READ_API_GRPC, grpc.credentials.createInsecure())
-    }
+  constructor() {
+    this._checkClient = new CheckServiceClient(KETO_READ_API_GRPC, grpc.credentials.createInsecure())
+  }
 
-    validateRelationTuple(
-        relationTuple: RelationTupleWithReplacements<PossibleReplacements>,
-        replacements: PossibleReplacements,
-    ): Promise<Result<{ allowed: boolean }, UnknownError>> {
-        const checkRequest = KetoGrpcConverter.createCheckRequest(relationTuple, replacements)
+  validateRelationTuple(
+    relationTuple: RelationTupleWithReplacements<PossibleReplacements>,
+    replacements: PossibleReplacements,
+  ): Promise<Result<{ allowed: boolean }, UnknownError>> {
+    const checkRequest = KetoGrpcConverter.createCheckRequest(relationTuple, replacements)
 
-        return new Promise((resolve) => {
-            this._checkClient.check(checkRequest, (error: grpc.ServiceError | null, response) => {
-                if (error) {
-                    switch (error.code) {
-                        case grpc.status.NOT_FOUND:
-                            resolve(value({ allowed: false as boolean }))
-                            return
-                        default:
-                            resolve(dError(new UnknownError({ data: error })))
-                            return
-                    }
-                }
-                resolve(value({ allowed: response.getAllowed() }))
-            })
-        })
-    }
+    return new Promise((resolve) => {
+      this._checkClient.check(checkRequest, (error: grpc.ServiceError | null, response) => {
+        if (error) {
+          switch (error.code) {
+            case grpc.status.NOT_FOUND:
+              resolve(value({ allowed: false as boolean }))
+              return
+            default:
+              resolve(dError(new UnknownError({ data: error })))
+              return
+          }
+        }
+        resolve(value({ allowed: response.getAllowed() }))
+      })
+    })
+  }
 }

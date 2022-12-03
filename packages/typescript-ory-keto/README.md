@@ -42,7 +42,7 @@ const valueWithreplacements = result.unwrapOrThrow()
  * Execute this at evaluation time (e.g. every incomming Request) to get the actual ory Relation tuple send to keto via grpc.
  */
 const grpcCheckRequest = KetoGrpcConverter.createCheckRequest(valueWithreplacements, {
-    userId: 'my_user_id',
+  userId: 'my_user_id',
 })
 ```
 
