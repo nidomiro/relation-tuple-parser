@@ -1,5 +1,5 @@
 #![allow(nonstandard_style)]
-// Generated from ./RelationTuple.g4 by ANTLR 4.8
+// Generated from ../../RelationTuple.g4 by ANTLR 4.8
 use antlr_rust::tree::{ParseTreeVisitor,ParseTreeVisitorCompat};
 use super::relationtupleparser::*;
 

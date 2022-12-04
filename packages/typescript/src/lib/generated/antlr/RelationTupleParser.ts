@@ -1,4 +1,4 @@
-// Generated from RelationTuple.g4 by ANTLR 4.9.0-SNAPSHOT
+// Generated from ../../RelationTuple.g4 by ANTLR 4.9.0-SNAPSHOT
 
 
 import { ATN } from "antlr4ts/atn/ATN";
@@ -239,7 +239,7 @@ export class RelationTupleParser extends Parser {
 				this.enterOuterAlt(_localctx, 1);
 				{
 				this.state = 35;
-				this.namespacedObject();
+				_localctx._subjectNamespacedObject = this.namespacedObject();
 				this.state = 36;
 				this.match(RelationTupleParser.T__0);
 				this.state = 38;
@@ -258,7 +258,7 @@ export class RelationTupleParser extends Parser {
 				this.enterOuterAlt(_localctx, 2);
 				{
 				this.state = 40;
-				this.namespacedObject();
+				_localctx._subjectNamespacedObject = this.namespacedObject();
 				}
 				break;
 			}
@@ -406,6 +406,7 @@ export class SubjectIdContext extends ParserRuleContext {
 
 
 export class SubjectSetContext extends ParserRuleContext {
+	public _subjectNamespacedObject!: NamespacedObjectContext;
 	public _subjectRelation!: Token;
 	public namespacedObject(): NamespacedObjectContext {
 		return this.getRuleContext(0, NamespacedObjectContext);

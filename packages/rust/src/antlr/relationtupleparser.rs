@@ -1,4 +1,4 @@
-// Generated from ./RelationTuple.g4 by ANTLR 4.8
+// Generated from ../../RelationTuple.g4 by ANTLR 4.8
 #![allow(dead_code)]
 #![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
