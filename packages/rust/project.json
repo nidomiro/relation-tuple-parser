@@ -18,13 +18,21 @@
         "cwd": "packages/rust"
       }
     },
+    "format": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cargo fmt",
+        "cwd": "packages/rust"
+      }
+    },
     "generate-parser": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
           "rm -rf src/antlr",
           "mkdir src/antlr",
-          "java -jar ./antlr4-4.8-2-SNAPSHOT-complete.jar -Dlanguage=Rust ../../RelationTuple.g4 -Xexact-output-dir -o src/antlr -visitor"
+          "java -jar ./antlr4-4.8-2-SNAPSHOT-complete.jar -Dlanguage=Rust ../../RelationTuple.g4 -Xexact-output-dir -o src/antlr -visitor",
+          "cargo fmt"
         ],
         "cwd": "packages/rust",
         "parallel": false
