@@ -719,6 +719,7 @@ pub type SubjectSetContext<'input> = BaseParserRuleContext<'input,SubjectSetCont
 
 #[derive(Clone)]
 pub struct SubjectSetContextExt<'input>{
+	pub subjectNamespacedObject: Option<Rc<NamespacedObjectContextAll<'input>>>,
 	pub subjectRelation: Option<TokenType<'input>>,
 ph:PhantomData<&'input str>
 }
@@ -755,6 +756,7 @@ impl<'input> SubjectSetContextExt<'input>{
 		Rc::new(
 			BaseParserRuleContext::new_parser_ctx(parent, invoking_state,SubjectSetContextExt{
 				subjectRelation: None, 
+				subjectNamespacedObject: None, 
 				ph:PhantomData
 			}),
 		)
@@ -800,7 +802,9 @@ where
 					{
 					/*InvokeRule namespacedObject*/
 					recog.base.set_state(35);
-					recog.namespacedObject()?;
+					let tmp = recog.namespacedObject()?;
+					 cast_mut::<_,SubjectSetContext >(&mut _localctx).subjectNamespacedObject = Some(tmp.clone());
+					  
 
 					recog.base.set_state(36);
 					recog.base.match_token(T__0,&mut recog.err_handler)?;
@@ -827,7 +831,9 @@ where
 					{
 					/*InvokeRule namespacedObject*/
 					recog.base.set_state(40);
-					recog.namespacedObject()?;
+					let tmp = recog.namespacedObject()?;
+					 cast_mut::<_,SubjectSetContext >(&mut _localctx).subjectNamespacedObject = Some(tmp.clone());
+					  
 
 					}
 				}

@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 antlr-rust = "0.3.0-beta"
+derive_builder = "0.12.0"

@@ -12,8 +12,8 @@ subject:            subjectId
 
 subjectId:          STRING;
 
-subjectSet:         namespacedObject '#' (subjectRelation=STRING)?
-                    | namespacedObject
+subjectSet:         subjectNamespacedObject=namespacedObject '#' (subjectRelation=STRING)?
+                    | subjectNamespacedObject=namespacedObject
                     ;
 
 STRING: CHAR+;
