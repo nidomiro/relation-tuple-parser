@@ -17,7 +17,8 @@ pub mod relationtupleparser;
 pub mod relationtuplevisitor;
 
 pub struct MyRelationTupleParser {
-    pub(crate) relation_tuple_builder: RelationTupleBuilder,
+    pub(crate) relation_tuple_builder: RelationTupleBuilder, //FIXME: change to private with errors vector. Then impl a getter which returns a Result<RelationTuple, Errors>
+    
 }
 
 impl ParseTreeVisitor<'_, RelationTupleParserContextType> for MyRelationTupleParser {}
@@ -26,8 +27,10 @@ impl RelationTupleVisitor<'_> for MyRelationTupleParser {
     fn visit_relationTuple(&mut self, ctx: &RelationTupleContext<'_>) {
         self.visit_children(ctx);
 
-        self.relation_tuple_builder
-            .relation(ctx.relation.as_ref().unwrap().get_text().into());
+        if let Some(relation) = ctx.relation.as_ref() {
+            self.relation_tuple_builder
+                .relation(relation.get_text().into());
+        }
     }
 
     fn visit_namespacedObject(&mut self, ctx: &NamespacedObjectContext<'_>) {
@@ -38,10 +41,14 @@ impl RelationTupleVisitor<'_> for MyRelationTupleParser {
             return;
         }
 
-        self.relation_tuple_builder
-            .namespace(ctx.namespace.as_ref().unwrap().get_text().into());
-        self.relation_tuple_builder
-            .object(ctx.object.as_ref().unwrap().get_text().into());
+        if let Some(namespace) = ctx.namespace.as_ref() {
+            self.relation_tuple_builder
+                .namespace(namespace.get_text().into());
+        }
+
+        if let Some(object) = ctx.object.as_ref() {
+            self.relation_tuple_builder.object(object.get_text().into());
+        }
     }
 
     fn visit_subject(&mut self, ctx: &SubjectContext<'_>) {
@@ -57,16 +64,17 @@ impl RelationTupleVisitor<'_> for MyRelationTupleParser {
     fn visit_subjectSet(&mut self, ctx: &SubjectSetContext<'_>) {
         self.visit_children(ctx);
 
-        let namespace_object = ctx.subjectNamespacedObject.as_ref().unwrap();
-        self.relation_tuple_builder.subject(Subject::Set {
-            namespace: namespace_object
-                .namespace
-                .as_ref()
-                .unwrap()
-                .get_text()
-                .into(),
-            object: namespace_object.object.as_ref().unwrap().get_text().into(),
-            relation: ctx.subjectRelation.as_ref().map(|x| x.get_text().into()),
-        });
+        if let Some(namespace_object) = ctx.subjectNamespacedObject.as_ref() {
+            if let (Some(namespace), Some(object)) = (
+                namespace_object.namespace.as_ref(),
+                namespace_object.object.as_ref(),
+            ) {
+                self.relation_tuple_builder.subject(Subject::Set {
+                    namespace: namespace.get_text().into(),
+                    object: object.get_text().into(),
+                    relation: ctx.subjectRelation.as_ref().map(|x| x.get_text().into()),
+                });
+            }
+        }
     }
 }

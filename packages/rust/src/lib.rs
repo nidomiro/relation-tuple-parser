@@ -1,69 +1,129 @@
 mod antlr;
 mod common;
 
-use crate::antlr::{MyRelationTupleParser, RelationTupleLexer, RelationTupleParser};
-use antlr_rust::common_token_stream::CommonTokenStream;
-use antlr_rust::token_factory::CommonTokenFactory;
-use antlr_rust::tree::Visitable;
-use antlr_rust::InputStream;
-
-use crate::common::relationtuple::{RelationTuple, RelationTupleParseError};
-
-impl RelationTuple {
-    fn from_str(relation_tuple: &str) -> Result<RelationTuple, RelationTupleParseError> {
-        let token_factory = CommonTokenFactory::default();
-        let lexer = RelationTupleLexer::new_with_token_factory(
-            InputStream::new(relation_tuple.into()),
-            &token_factory,
-        );
-        let token_source = CommonTokenStream::new(lexer);
-        let mut parser = RelationTupleParser::new(token_source);
-        let parse_result = parser.relationTuple().expect("parsed unsuccessfully");
-        let mut visitor = MyRelationTupleParser {
-            relation_tuple_builder: Default::default(),
-        };
-
-        parse_result.accept(&mut visitor);
-
-        visitor.relation_tuple_builder.build()
-    }
-}
+pub use crate::common::relationtuple::{RelationTuple, RelationTupleParseError, Subject};
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::common::relationtuple::Subject::{Id, Set};
     use std::time::SystemTime;
 
-    #[test]
-    fn test_valid_syntax() {
-        let result = RelationTuple::from_str("myNamespace:myObject#myRelation@mySubjectId");
-        assert_eq!(
-            result,
-            Ok(RelationTuple {
-                namespace: "myNamespace".into(),
-                object: "myObject".into(),
-                relation: "myRelation".into(),
-                subject: Id("mySubjectId".into()),
-            })
-        );
+    macro_rules! valid_relation_tuple_tests {
+        ($($name:ident: $value:expr,)*) => {
+        $(
+            #[test]
+            fn $name() {
+                let (input, expected) = $value;
+                assert_eq!(expected,  RelationTuple::from_str(input).unwrap());
+            }
+        )*
+        }
+    }
 
-        let result = RelationTuple::from_str(
-            "myNamespace:myObject#myRelation@mySubjectNamespace:mySubjectObject#mySubjectRelation",
-        );
-        assert_eq!(
-            result,
-            Ok(RelationTuple {
-                namespace: "myNamespace".into(),
-                object: "myObject".into(),
-                relation: "myRelation".into(),
-                subject: Set {
-                    namespace: "mySubjectNamespace".into(),
-                    object: "mySubjectObject".into(),
-                    relation: Some("mySubjectRelation".into()),
-                },
-            })
-        );
+    valid_relation_tuple_tests! {
+        valid_0: ("myNamespace:myObject#myRelation@mySubjectId", RelationTuple {
+            namespace: "myNamespace".into(),
+            object: "myObject".into(),
+            relation: "myRelation".into(),
+            subject: Subject::Id("mySubjectId".into()),
+        }),
+        valid_1: ("myNamespace:myObject#myRelation@(mySubjectId)", RelationTuple {
+            namespace: "myNamespace".into(),
+            object: "myObject".into(),
+            relation: "myRelation".into(),
+            subject: Subject::Id("mySubjectId".into()),
+        }),
+        valid_2: ("myNamespace:myObject#myRelation@mySubjectNamespace:mySubjectObject#mySubjectRelation", RelationTuple {
+            namespace: "myNamespace".into(),
+            object: "myObject".into(),
+            relation: "myRelation".into(),
+            subject: Subject::Set {
+                namespace: "mySubjectNamespace".into(),
+                object: "mySubjectObject".into(),
+                relation: Some("mySubjectRelation".into()),
+            },
+        }),
+        valid_3: ("myNamespace:myObject#myRelation@(mySubjectNamespace:mySubjectObject#mySubjectRelation)", RelationTuple {
+            namespace: "myNamespace".into(),
+            object: "myObject".into(),
+            relation: "myRelation".into(),
+            subject: Subject::Set {
+                namespace: "mySubjectNamespace".into(),
+                object: "mySubjectObject".into(),
+                relation: Some("mySubjectRelation".into()),
+            },
+        }),
+
+        valid_4: ("myNamespace:myObject#myRelation@mySubjectNamespace:mySubjectObject#", RelationTuple {
+            namespace: "myNamespace".into(),
+            object: "myObject".into(),
+            relation: "myRelation".into(),
+            subject: Subject::Set {
+                namespace: "mySubjectNamespace".into(),
+                object: "mySubjectObject".into(),
+                relation: None,
+            },
+        }),
+        valid_5: ("myNamespace:myObject#myRelation@(mySubjectNamespace:mySubjectObject#)", RelationTuple {
+            namespace: "myNamespace".into(),
+            object: "myObject".into(),
+            relation: "myRelation".into(),
+            subject: Subject::Set {
+                namespace: "mySubjectNamespace".into(),
+                object: "mySubjectObject".into(),
+                relation: None,
+            },
+        }),
+
+        valid_6: ("myNamespace:myObject#myRelation@mySubjectNamespace:mySubjectObject", RelationTuple {
+            namespace: "myNamespace".into(),
+            object: "myObject".into(),
+            relation: "myRelation".into(),
+            subject: Subject::Set {
+                namespace: "mySubjectNamespace".into(),
+                object: "mySubjectObject".into(),
+                relation: None,
+            },
+        }),
+        valid_7: ("myNamespace:myObject#myRelation@(mySubjectNamespace:mySubjectObject)", RelationTuple {
+            namespace: "myNamespace".into(),
+            object: "myObject".into(),
+            relation: "myRelation".into(),
+            subject: Subject::Set {
+                namespace: "mySubjectNamespace".into(),
+                object: "mySubjectObject".into(),
+                relation: None,
+            },
+        }),
+
+        valid_8: ("  myNamespace:myObject#myRelation@(mySubjectNamespace:mySubjectObject)  ", RelationTuple {
+            namespace: "myNamespace".into(),
+            object: "myObject".into(),
+            relation: "myRelation".into(),
+            subject: Subject::Set {
+                namespace: "mySubjectNamespace".into(),
+                object: "mySubjectObject".into(),
+                relation: None,
+            },
+        }),
+
+    }
+
+    macro_rules! invalid_relation_tuple_tests {
+        ($($name:ident: $value:expr,)*) => {
+        $(
+            #[test]
+            fn $name() {
+                let (input, expected) = $value;
+                assert_eq!(expected,  RelationTuple::from_str(input).unwrap_err());
+            }
+        )*
+        }
+    }
+
+    invalid_relation_tuple_tests! {
+        invalid_0: ("", RelationTupleParseError::FieldCannotBeNone {field: "namespace"}),
+        invalid_1: ("a", RelationTupleParseError::FieldCannotBeNone {field: "object"}),
     }
 
     #[test]
