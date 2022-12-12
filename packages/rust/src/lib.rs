@@ -124,6 +124,7 @@ mod tests {
     invalid_relation_tuple_tests! {
         invalid_0: ("", RelationTupleParseError::FieldCannotBeNone {field: "namespace"}),
         invalid_1: ("a", RelationTupleParseError::FieldCannotBeNone {field: "object"}),
+        invalid_2: ("ns:object:#relation@subjectId", RelationTupleParseError::FieldCannotBeNone {field: "object"}),
     }
 
     #[test]

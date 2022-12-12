@@ -1,10 +1,15 @@
 #![allow(non_snake_case)]
 
+
+use antlr_rust::tree::Visitable;
+use antlr_rust::common_token_stream::CommonTokenStream;
 use antlr_rust::rule_context::RuleContext;
 use antlr_rust::token::Token;
+use antlr_rust::token_factory::CommonTokenFactory;
 use antlr_rust::tree::{ParseTree, ParseTreeVisitor};
-use antlr_rust::TidExt;
+use antlr_rust::{TidExt, InputStream};
 
+use crate::{RelationTuple, RelationTupleParseError};
 use crate::common::relationtuple::{RelationTupleBuilder, Subject};
 pub use relationtuplelexer::*;
 pub use relationtuplelistener::*;
@@ -18,7 +23,7 @@ pub mod relationtuplevisitor;
 
 pub struct MyRelationTupleParser {
     pub(crate) relation_tuple_builder: RelationTupleBuilder, //FIXME: change to private with errors vector. Then impl a getter which returns a Result<RelationTuple, Errors>
-    
+    //relation_tuple_errors: 
 }
 
 impl ParseTreeVisitor<'_, RelationTupleParserContextType> for MyRelationTupleParser {}
@@ -76,5 +81,33 @@ impl RelationTupleVisitor<'_> for MyRelationTupleParser {
                 });
             }
         }
+    }
+}
+
+
+impl RelationTuple {
+    pub fn from_str(relation_tuple: &str) -> Result<RelationTuple, RelationTupleParseError> {
+        let relation_tuple = relation_tuple.trim();
+        if relation_tuple.is_empty() {
+            RelationTupleBuilder::default().build()?;
+        }
+
+        // FIXME: implement custom error listener
+
+        let token_factory = CommonTokenFactory::default();
+        let lexer = RelationTupleLexer::new_with_token_factory(
+            InputStream::new(relation_tuple.into()),
+            &token_factory,
+        );
+        let token_source = CommonTokenStream::new(lexer);
+        let mut parser = RelationTupleParser::new(token_source);
+        let parse_result = parser.relationTuple().expect("parsed unsuccessfully");
+        let mut visitor = MyRelationTupleParser {
+            relation_tuple_builder: Default::default(),
+        };
+
+        parse_result.accept(&mut visitor);
+
+        visitor.relation_tuple_builder.build()
     }
 }
