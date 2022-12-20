@@ -86,7 +86,7 @@ impl RelationTupleVisitor<'_> for MyRelationTupleParser {
 
 
 impl RelationTuple {
-    pub fn from_str(relation_tuple: &str) -> Result<RelationTuple, RelationTupleParseError> {
+    pub fn from_str_antlr(relation_tuple: &str) -> Result<RelationTuple, RelationTupleParseError> {
         let relation_tuple = relation_tuple.trim();
         if relation_tuple.is_empty() {
             RelationTupleBuilder::default().build()?;

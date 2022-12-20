@@ -3,6 +3,7 @@ use derive_builder::Builder;
 #[derive(Debug, PartialEq)]
 pub enum RelationTupleParseError {
     FieldCannotBeNone { field: &'static str },
+    SyntaxError { message: &'static str}
 }
 
 impl From<derive_builder::UninitializedFieldError> for RelationTupleParseError {
