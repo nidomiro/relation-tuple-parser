@@ -1,4 +1,3 @@
-mod antlr;
 mod common;
 
 pub use crate::common::relationtuple::{RelationTuple, RelationTupleParseError, Subject};
@@ -124,7 +123,7 @@ mod tests {
     invalid_relation_tuple_tests! {
         invalid_0: ("", RelationTupleParseError::SyntaxError { message: "The string cannot be empty" }),
         invalid_1: ("a", RelationTupleParseError::FieldCannotBeNone {field: "object"}),
-        invalid_2: ("ns:object:#relation@subjectId", RelationTupleParseError::FieldCannotBeNone {field: "object"}),
+        invalid_2: ("ns:object:#relation@subjectId", RelationTupleParseError::SyntaxError { message: "The characters ':#()' are not allowed as values" }),
     }
 
     #[test]
@@ -137,8 +136,8 @@ mod tests {
                 // it prints '2'
                 println!(
                     "executing parse for {count} elements took {}ms ({}ms per parse)",
-                    elapsed.as_millis(),
-                    elapsed.as_millis() as f64 / count as f64
+                    elapsed.as_micros() as f64 / 1000.0,
+                    elapsed.as_micros() as f64 / 1000.0 as f64 / count as f64
                 );
             }
             Err(e) => {

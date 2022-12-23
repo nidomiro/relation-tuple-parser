@@ -2,67 +2,75 @@ use crate::common::relationtuple::{
     RelationTuple, RelationTupleBuilder, RelationTupleParseError, Subject,
 };
 
-fn parse_object_part(
-    builder: &mut RelationTupleBuilder,
-    string: &str,
+static INVALID_CHAR_IN_STRING_ERROR_MESSAGE: &str = "The characters ':#()' are not allowed as values";
+
+fn parse_object_part<'a>(
+    builder: &mut RelationTupleBuilder<'a>,
+    string: &'a str,
 ) -> Result<(), RelationTupleParseError> {
     let mut parts = string.split(&[':', '#']);
     builder.namespace(
         parts
             .next()
-            .ok_or(RelationTupleParseError::FieldCannotBeNone { field: "namespace" })?
-            .into(),
+            .ok_or(RelationTupleParseError::FieldCannotBeNone { field: "namespace" })?,
     );
     builder.object(
         parts
             .next()
-            .ok_or(RelationTupleParseError::FieldCannotBeNone { field: "object" })?
-            .into(),
+            .ok_or(RelationTupleParseError::FieldCannotBeNone { field: "object" })?,
     );
     builder.relation(
         parts
             .next()
-            .ok_or(RelationTupleParseError::FieldCannotBeNone { field: "relation" })?
-            .into(),
+            .ok_or(RelationTupleParseError::FieldCannotBeNone { field: "relation" })?,
     );
 
-    Ok(())
+    match parts.next() {
+        Some(_) => Err(RelationTupleParseError::SyntaxError { message: INVALID_CHAR_IN_STRING_ERROR_MESSAGE }),
+        None => Ok(())
+    }
 }
 
-fn parse_subject_part(
-    builder: &mut RelationTupleBuilder,
-    string: &str,
-) -> Result<(), RelationTupleParseError> {
-    let mut string = string;
-
+fn remove_surrounding_parenthesis(string: &str) -> &str {
     if string.starts_with('(') && string.ends_with(')') {
-        string = &string[1..string.len() - 1];
+        &string[1..string.len() - 1]
+    } else {
+        string
     }
+}
 
+fn  parse_subject_part<'a>(
+    builder: &mut RelationTupleBuilder<'a>,
+    string: &'a str,
+) -> Result<(), RelationTupleParseError> {
+    let string = remove_surrounding_parenthesis(string);
     let mut parts = string.split(&[':', '#']);
+
     let namespace_or_id = parts.next().ok_or(RelationTupleParseError::SyntaxError {
         message: "The subject has to have an SubjectId or SubjectSet",
     })?;
 
     let object = parts.next();
 
-    if object == None {
-        builder.subject(Subject::Id(namespace_or_id.into()));
-        return Ok(());
+    if let Some(object) = object {
+        builder.subject(Subject::Set {
+            namespace: namespace_or_id,
+            object: object,
+            relation: parts.next().filter(|x| !x.is_empty()),
+        });
+    } else {
+        builder.subject(Subject::Id(namespace_or_id));
     }
 
-    builder.subject(Subject::Set {
-        namespace: namespace_or_id.into(),
-        object: object.unwrap().into(),
-        relation: parts.next().filter(|x| x.len() > 0).map(|x| x.into()),
-    });
-
-    Ok(())
+    match parts.next() {
+        Some(_) => Err(RelationTupleParseError::SyntaxError { message: INVALID_CHAR_IN_STRING_ERROR_MESSAGE }),
+        None => Ok(())
+    }
 }
 
 // ns:obj#rel@sns:sobj#srel
-impl RelationTuple {
-    pub fn from_str_split(relation_tuple: &str) -> Result<RelationTuple, RelationTupleParseError> {
+impl<'a> RelationTuple<'a> {
+    pub fn from_str_split(relation_tuple: &'a str) -> Result<RelationTuple<'a>, RelationTupleParseError> {
         let relation_tuple = relation_tuple.trim();
 
         if relation_tuple.len() == 0 {
