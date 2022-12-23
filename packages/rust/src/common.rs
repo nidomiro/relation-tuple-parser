@@ -1,3 +1,6 @@
-pub mod relationtuple;
+mod relationtuple;
 
-pub mod relationtupleparser;
+mod relationtupleparser;
+
+pub use relationtuple::*;
+pub use relationtupleparser::*;

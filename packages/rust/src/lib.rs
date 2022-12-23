@@ -1,6 +1,6 @@
 mod common;
 
-pub use crate::common::relationtuple::{RelationTuple, RelationTupleParseError, Subject};
+pub use crate::common::{RelationTuple, RelationTupleParseError, Subject};
 
 #[cfg(test)]
 mod tests {
@@ -13,7 +13,7 @@ mod tests {
             #[test]
             fn $name() {
                 let (input, expected) = $value;
-                assert_eq!(expected,  RelationTuple::from_str_split(input).unwrap());
+                assert_eq!(expected,  RelationTuple::from_str(input).unwrap());
             }
         )*
         }
@@ -114,7 +114,7 @@ mod tests {
             #[test]
             fn $name() {
                 let (input, expected) = $value;
-                assert_eq!(expected,  RelationTuple::from_str_split(input).unwrap_err());
+                assert_eq!(expected,  RelationTuple::from_str(input).unwrap_err());
             }
         )*
         }
@@ -130,7 +130,7 @@ mod tests {
     fn benchmark_parser_subject_set() {
         let count = 100;
         let now = SystemTime::now();
-        (0..count).for_each(|_| { RelationTuple::from_str_split("myNamespace:myObject#myRelation@mySubjectNamespace:mySubjectObject#mySubjectRelation").unwrap(); });
+        (0..count).for_each(|_| { RelationTuple::from_str("myNamespace:myObject#myRelation@mySubjectNamespace:mySubjectObject#mySubjectRelation").unwrap(); });
         match now.elapsed() {
             Ok(elapsed) => {
                 // it prints '2'

@@ -70,7 +70,7 @@ fn  parse_subject_part<'a>(
 
 // ns:obj#rel@sns:sobj#srel
 impl<'a> RelationTuple<'a> {
-    pub fn from_str_split(relation_tuple: &'a str) -> Result<RelationTuple<'a>, RelationTupleParseError> {
+    pub fn from_str(relation_tuple: &'a str) -> Result<RelationTuple<'a>, RelationTupleParseError> {
         let relation_tuple = relation_tuple.trim();
 
         if relation_tuple.len() == 0 {
