@@ -2,7 +2,8 @@ use crate::common::relationtuple::{
     RelationTuple, RelationTupleBuilder, RelationTupleParseError, Subject,
 };
 
-static INVALID_CHAR_IN_STRING_ERROR_MESSAGE: &str = "The characters ':#()' are not allowed as values";
+static INVALID_CHAR_IN_STRING_ERROR_MESSAGE: &str =
+    "The characters ':#()' are not allowed as values";
 
 fn parse_object_part<'a>(
     builder: &mut RelationTupleBuilder<'a>,
@@ -26,8 +27,10 @@ fn parse_object_part<'a>(
     );
 
     match parts.next() {
-        Some(_) => Err(RelationTupleParseError::SyntaxError { message: INVALID_CHAR_IN_STRING_ERROR_MESSAGE }),
-        None => Ok(())
+        Some(_) => Err(RelationTupleParseError::SyntaxError {
+            message: INVALID_CHAR_IN_STRING_ERROR_MESSAGE,
+        }),
+        None => Ok(()),
     }
 }
 
@@ -39,7 +42,7 @@ fn remove_surrounding_parenthesis(string: &str) -> &str {
     }
 }
 
-fn  parse_subject_part<'a>(
+fn parse_subject_part<'a>(
     builder: &mut RelationTupleBuilder<'a>,
     string: &'a str,
 ) -> Result<(), RelationTupleParseError> {
@@ -63,8 +66,10 @@ fn  parse_subject_part<'a>(
     }
 
     match parts.next() {
-        Some(_) => Err(RelationTupleParseError::SyntaxError { message: INVALID_CHAR_IN_STRING_ERROR_MESSAGE }),
-        None => Ok(())
+        Some(_) => Err(RelationTupleParseError::SyntaxError {
+            message: INVALID_CHAR_IN_STRING_ERROR_MESSAGE,
+        }),
+        None => Ok(()),
     }
 }
 
