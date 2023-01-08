@@ -3,11 +3,9 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "postinstall": "npm run patch-antlr4ts",
     "nx": "nx",
     "format": "nx format",
-    "format-all": "nx format --all",
-    "patch-antlr4ts": "cd tools/antlr4ts-patch && jar uf ../../node_modules/antlr4ts-cli/target/antlr4-typescript-4.9.0-SNAPSHOT-complete.jar org/antlr/v4/tool/templates/codegen/TypeScript/TypeScript.stg"
+    "format-all": "nx format --all"
   },
   "private": true,
   "dependencies": {
@@ -17,8 +15,6 @@
     "@nidomiro/ts-type-utils": "^0.1.1",
     "@ory/keto-client": "^0.10.0-alpha.0",
     "@ory/keto-grpc-client": "^0.10.0-alpha.0",
-    "antlr4": "^4.11.0",
-    "antlr4ts": "^0.5.0-alpha.4",
     "assert-never": "^1.2.1",
     "defekt": "^9.3.1",
     "lodash": "4.17.21",
@@ -43,7 +39,6 @@
     "@types/node": "18.7.1",
     "@typescript-eslint/eslint-plugin": "^5.36.1",
     "@typescript-eslint/parser": "^5.36.1",
-    "antlr4ts-cli": "^0.5.0-alpha.4",
     "eslint": "~8.15.0",
     "eslint-config-prettier": "8.1.0",
     "jest": "28.1.1",

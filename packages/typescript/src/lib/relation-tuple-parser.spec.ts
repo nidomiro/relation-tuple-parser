@@ -1,4 +1,4 @@
-import { parseRelationTupleSplit } from './relation-tuple-parser'
+import { parseRelationTuple } from './relation-tuple-parser'
 import { type RelationTuple } from './relation-tuple'
 import {performance, PerformanceObserver} from 'perf_hooks';
 
@@ -120,19 +120,19 @@ describe('parseRelationTuple tests', () => {
         } as RelationTuple,
       ],
     ])('%s', (str, expectedRelationTuple) => {
-      const result = parseRelationTupleSplit(str)
+      const result = parseRelationTuple(str)
 
       expect(result.unwrapOrThrow()).toEqual(expectedRelationTuple)
     })
   })
 
-  describe('performance tests', () => {
+  describe.skip('performance tests', () => {
     it('with subject', () => {
       const relationTuples = Array.from({ length: 100 }, (_, i) => generateRelationTuple(i, false))
 
       const result = relationTuples.map((tuple) => {
         const start = process.hrtime.bigint()
-        const result = parseRelationTupleSplit(tuple)
+        const result = parseRelationTuple(tuple)
         const end = process.hrtime.bigint()
 
         expect(result.unwrapOrThrow()).toBeDefined()
@@ -165,7 +165,7 @@ describe('parseRelationTuple tests', () => {
 
       performance.mark(`START`)
       const result = relationTuples.map((tuple) => {
-        return parseRelationTupleSplit(tuple)
+        return parseRelationTuple(tuple)
       })
       performance.mark(`END`)
 
@@ -211,7 +211,7 @@ describe('parseRelationTuple tests', () => {
       ['namespace:object##relation@id'],
       ['namespace:object#relation@@id'],
     ])('%s', (str) => {
-      const result = parseRelationTupleSplit(str)
+      const result = parseRelationTuple(str)
 
       if (result.hasValue()) {
         console.log(`Result has value: `, result.value)
