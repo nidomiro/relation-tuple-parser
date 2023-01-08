@@ -1,5 +1,6 @@
-import { parseRelationTuple } from './relation-tuple-parser'
+import { parseRelationTupleSplit } from './relation-tuple-parser'
 import { type RelationTuple } from './relation-tuple'
+import {performance, PerformanceObserver} from 'perf_hooks';
 
 function fail(reason = 'fail was called in a test.') {
   throw new Error(reason)
@@ -119,19 +120,19 @@ describe('parseRelationTuple tests', () => {
         } as RelationTuple,
       ],
     ])('%s', (str, expectedRelationTuple) => {
-      const result = parseRelationTuple(str)
+      const result = parseRelationTupleSplit(str)
 
       expect(result.unwrapOrThrow()).toEqual(expectedRelationTuple)
     })
   })
 
-  describe.skip('performance tests', () => {
+  describe('performance tests', () => {
     it('with subject', () => {
       const relationTuples = Array.from({ length: 100 }, (_, i) => generateRelationTuple(i, false))
 
       const result = relationTuples.map((tuple) => {
         const start = process.hrtime.bigint()
-        const result = parseRelationTuple(tuple)
+        const result = parseRelationTupleSplit(tuple)
         const end = process.hrtime.bigint()
 
         expect(result.unwrapOrThrow()).toBeDefined()
@@ -152,32 +153,41 @@ describe('parseRelationTuple tests', () => {
       expect(avgInMs).toBeLessThan(0.5)
     })
 
-    it('with subjectSet', () => {
+    it('with subjectSet', async () => {
       const relationTuples = Array.from({ length: 100 }, (_, i) => generateRelationTuple(i, true))
 
+
+      const obs = new PerformanceObserver((items) => {
+        console.log(items.getEntries()[0].duration);
+        performance.clearMarks();
+      });
+      obs.observe({ type: 'measure' });
+
+      performance.mark(`START`)
       const result = relationTuples.map((tuple) => {
-        const start = process.hrtime.bigint()
-        const result = parseRelationTuple(tuple)
-        const end = process.hrtime.bigint()
-
-        expect(result.unwrapOrThrow()).toBeDefined()
-
-        return end - start
+        return parseRelationTupleSplit(tuple)
       })
+      performance.mark(`END`)
 
-      const sumInNs = Number(result.reduce((a, b) => a + b, BigInt(0)))
-      const avgInNs = Number(sumInNs) / result.length
+      // const sumInNs = Number(result.reduce((a, b) => a + b, BigInt(0)))
+      // const avgInNs = Number(sumInNs) / result.length
 
-      const sumInMs = nsToMs(sumInNs)
-      const avgInMs = nsToMs(avgInNs)
+      // const sumInMs = nsToMs(sumInNs)
+      // const avgInMs = nsToMs(avgInNs)
+      performance.measure('START to END', 'START', 'END');
 
-      console.log(
-        `performance tests :: with subjectSet :: Execution for ${result.length} elements took: ${sumInMs}ms (avg: ${avgInMs}ms)`,
-      )
+      const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-      expect(avgInMs).toBeLessThan(0.7)
+      await sleep(2000)
+
+        // console.log(
+        //   `performance tests :: with subjectSet :: Execution for ${result.length} elements took: ${sumInMs}ms (avg: ${avgInMs}ms)`,
+        // )
+
+        // expect(avgInMs).toBeLessThan(0.7)
     })
-  })
+
+})
 
   describe('rejects wrong syntax', () => {
     it.each([
@@ -201,13 +211,10 @@ describe('parseRelationTuple tests', () => {
       ['namespace:object##relation@id'],
       ['namespace:object#relation@@id'],
     ])('%s', (str) => {
-      const result = parseRelationTuple(str)
+      const result = parseRelationTupleSplit(str)
 
       if (result.hasValue()) {
         console.log(`Result has value: `, result.value)
-      }
-
-      if (result.hasValue()) {
         fail(`Expected result to contain an error but got a value: \n${JSON.stringify(result.value, undefined, 2)}`)
       }
     })
